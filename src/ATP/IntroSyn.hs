@@ -1,5 +1,5 @@
 
-{- 
+{-
 A simple expression language.  Abstract syntax.
 
 E ::= P + E | P
@@ -27,12 +27,12 @@ case e of
 Note that we only export the abstract syntax and the quasiquoter,
 so the module can be imported unqualified.
 
--} 
+-}
 
 module ATP.IntroSyn
   ( Expr(..)
   , expr
-  ) 
+  )
 where
 
 import Prelude hiding (id)
@@ -62,12 +62,12 @@ instance Parse Expr where
   parser = parseExpr
 
 parseExpr :: Parser Expr
-parseExpr = P.buildExpressionParser table atomic <?> "expr" 
+parseExpr = P.buildExpressionParser table atomic <?> "expr"
 
 table :: P.OperatorTable Char () Expr
-table = [ [op "*" Mul P.AssocRight] 
+table = [ [op "*" Mul P.AssocRight]
         , [op "+" Add P.AssocRight]
-        ] 
+        ]
   where op s f = P.Infix (do{ Lex.reservedOp s; return f })
 
 antiExpr :: Parser Expr
@@ -95,10 +95,10 @@ parse = Lex.makeParser parseExpr
 quoteExprExp :: String -> TH.ExpQ
 quoteExprPat :: String -> TH.PatQ
 
-{- 
+{-
 The quasiquoter for Exprs.  It is the only export besides the syntax
 for Exprs.
--} 
+-}
 
 expr :: QuasiQuoter
 expr = QuasiQuoter quoteExprExp quoteExprPat
@@ -108,8 +108,8 @@ quoteExprExp s = Q.dataToExpQ (const Nothing `G.extQ` antiExprExp) (parse s)
 -- Quote as an expression.
 
 antiExprExp :: Expr -> Maybe TH.ExpQ
-antiExprExp (Var v) = 
-  case v of 
+antiExprExp (Var v) =
+  case v of
     '$':back -> Just $ TH'.varE back
     '^':back -> Just $ TH'.conE "Const" [TH'.varE back]
     _ -> Just $ TH'.varE v
@@ -120,8 +120,8 @@ antiExprExp _ = Nothing
 quoteExprPat s = Q.dataToPatQ (const Nothing `G.extQ` antiExprPat) (parse s)
 
 antiExprPat :: Expr -> Maybe TH.PatQ
-antiExprPat (Var v) = 
-  case v of 
+antiExprPat (Var v) =
+  case v of
     '$':back -> Just $ TH'.varP back
     '^':back -> Just $ TH'.conP "Const" [TH'.varP back]
     "_" -> Just TH.wildP
@@ -130,10 +130,10 @@ antiExprPat _ = Nothing
 
 -- * Printing
 
-{- 
+{-
 Print "+" and "*" as right associative by including
 a precedence argument.
--} 
+-}
 
 instance Print Expr where
   pPrint = pp 0
@@ -144,13 +144,13 @@ instance Show Expr where
 pp :: Int -> Expr -> PP.Doc
 pp _ (Var s) = PP.text s
 pp _ (Const n) = PP.integer n
-pp pr (Add e1 e2) = 
-     let doc1 = pp 3 e1 
-         doc2 = pp 2 e2 
+pp pr (Add e1 e2) =
+     let doc1 = pp 3 e1
+         doc2 = pp 2 e2
          doc3 = doc1 <+> PP.text "+" <+> doc2 in
      if pr > 2 then PP.parens doc3 else doc3
-pp pr (Mul e1 e2) = 
-     let doc1 = pp 5 e1 
-         doc2 = pp 4 e2 
+pp pr (Mul e1 e2) =
+     let doc1 = pp 5 e1
+         doc2 = pp 4 e2
          doc3 = doc1 <+> PP.text "*" <+> doc2 in
      if pr > 4 then PP.parens doc3 else doc3

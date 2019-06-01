@@ -13,10 +13,10 @@ module ATP.Combining
   , addDefault
   )
 where
- 
+
 #include "undefined.h"
 
-import ATP.Util.Prelude 
+import ATP.Util.Prelude
 import qualified ATP.Cong as Cong
 import qualified ATP.Cooper as Cooper
 import qualified ATP.DefCnf as Cnf
@@ -44,7 +44,7 @@ data Lang = Lang { name :: String
                  , fn :: (Func, Int) -> Bool
                  , rn :: Rational -> Bool
                  , pr :: (Pred, Int) -> Bool
-                 , dp :: Formula -> Bool 
+                 , dp :: Formula -> Bool
                  }
 
 instance Print Lang where
@@ -52,7 +52,7 @@ instance Print Lang where
 
 dloLang :: Lang
 dloLang = Lang "dloLang" fdesc ndesc pdesc Dlo.valid
-  where fdesc = const False 
+  where fdesc = const False
         ndesc = const True
         pdesc = flip elem preds
         preds = [ ("≤", 2::Int), ("<", 2), ("≥", 2), (">", 2)]
@@ -85,50 +85,50 @@ chooseLang langs fm = case fm of
   Atom(R p args) -> List.find (flip pr (p,length args)) langs
   _ -> Debug.impossible
 
-listify :: (a -> (b -> c) -> c) -> [a] -> ([b] -> c) -> c 
-listify f l cont = case l of 
+listify :: (a -> (b -> c) -> c) -> [a] -> ([b] -> c) -> c
+listify f l cont = case l of
   [] -> cont []
   h:t -> f h (\h' -> listify f t (\t' -> cont (h':t')))
 
 homot :: Print a => Lang -> Term -> (Term -> [Formula] -> Reader Int a) -> [Formula] -> Reader Int a
-homot lang tm cont defs = case tm of 
+homot lang tm cont defs = case tm of
   Var _ -> cont tm defs
-  Num r -> 
-    if rn lang r 
+  Num r ->
+    if rn lang r
     then {-# SCC "homot1" #-} cont tm defs
     else {-# SCC "homot2" #-} do
       n <- Reader.ask
       Reader.local (+1) $ cont (Var ("v_" ++ show n)) (Var ("v_" ++ show n) ≡ tm : defs)
-  Fn f args -> 
-    if fn lang (f, length args) 
+  Fn f args ->
+    if fn lang (f, length args)
     then listify (homot lang) args (\a -> cont (Fn f a)) defs
     else do
       n <- Reader.ask
       Reader.local (+1) $ cont (Var ("v_" ++ show n)) (Var ("v_" ++ show n) ≡ tm : defs)
 
 homol :: Print a => [Lang] -> Formula -> (Formula -> [Formula] -> Reader Int a) -> [Formula] -> Reader Int a
-homol langs fm cont defs = case fm of 
+homol langs fm cont defs = case fm of
   Not f -> homol langs f (\p -> cont (Not p)) defs
-  Atom (R p args) -> 
-    let lang = case chooseLang langs fm of 
-          Just l -> l 
-          Nothing -> __IMPOSSIBLE__ 
+  Atom (R p args) ->
+    let lang = case chooseLang langs fm of
+          Just l -> l
+          Nothing -> __IMPOSSIBLE__
     in listify (homot lang) args (\a -> cont (Atom (R p a))) defs
   _ -> error "homol: not a literal"
 
 homo :: Print a => [Lang] -> [Formula] -> ([Formula] -> [Formula] -> Reader Int a) -> [Formula] -> Reader Int a
-homo langs fms cont = 
+homo langs fms cont =
   listify (homol langs) fms
           (\dun defs -> if null defs then cont dun defs
                         else homo langs defs (\res -> cont (dun ++ res)) [])
 
 homogenize :: [Lang] -> [Formula] -> [Formula]
-homogenize langs fms = 
-  let n = 1 + foldr (Cnf.maxVarIndex "v_") 0 (Fol.fv fms) 
+homogenize langs fms =
+  let n = 1 + foldr (Cnf.maxVarIndex "v_") 0 (Fol.fv fms)
   in Reader.runReader (homo langs fms (\res _ -> return res) []) n
 
 belongs :: Lang -> Formula -> Bool
-belongs lang fm = 
+belongs lang fm =
   List.all (fn lang) (Fol.functions fm) &&
   List.all (rn lang) (Fol.nums fm) &&
   List.all (pr lang) (Fol.predicates fm \\ [("=", 2)])
@@ -142,28 +142,28 @@ langpartition langs fms = case langs of
 -- * Interpolants
 
 arreq :: Vars -> [Formula]
-arreq l = case l of 
+arreq l = case l of
   v1:v2:rest -> Var v1 ≡ Var v2 : arreq (v2 : rest)
   _ -> []
 
 arrangement :: [Vars] -> [Formula]
-arrangement part = 
-  foldr (Set.union . arreq) 
-    (map (\(v,w) -> Var v ≠ Var w) (List.distinctPairs (map head part))) 
+arrangement part =
+  foldr (Set.union . arreq)
+    (map (\(v,w) -> Var v ≠ Var w) (List.distinctPairs (map head part)))
     part
 
 destDef :: Formula -> Maybe (Var, Term)
-destDef fm = case fm of 
+destDef fm = case fm of
   Atom (R "=" [Var x, t]) | not (elem x $ Fol.fv t) -> Just (x, t)
   Atom (R "=" [t, Var x]) | not (elem x $ Fol.fv t) -> Just (x, t)
-  _ -> Nothing 
+  _ -> Nothing
 
 redeqs :: Clause -> Clause
 redeqs eqs = case List.find (Maybe.isJust . destDef) eqs of
-  Just eq -> 
-    let (x, t) = case destDef eq of 
-          Just xt -> xt 
-          Nothing -> __IMPOSSIBLE__ 
+  Just eq ->
+    let (x, t) = case destDef eq of
+          Just xt -> xt
+          Nothing -> __IMPOSSIBLE__
     in redeqs (map (Fol.apply (x ⟾ t)) (eqs \\ [eq]))
   Nothing -> eqs
 
@@ -173,25 +173,25 @@ trydps ldseps fms =
            ldseps
 
 allpartitions :: Ord a => [a] -> [[[a]]]
-allpartitions = foldr (\h y -> foldr (allinsertions h) [] y) [[]] 
-  where allinsertions x l acc = 
+allpartitions = foldr (\h y -> foldr (allinsertions h) [] y) [[]]
+  where allinsertions x l acc =
           foldr (\p acc' -> ((x:p) : (l \\ [p])) : acc') (([x]:l):acc) l
 
 slowNelopRefute :: [Var] -> [(Lang, Clause)] -> Bool
-slowNelopRefute vars ldseps = 
+slowNelopRefute vars ldseps =
   List.all (trydps ldseps . arrangement) (allpartitions vars)
 
 slowNelop1 :: [Lang] -> Clause -> Bool
-slowNelop1 langs fms0 = 
-  let fms = homogenize langs fms0 
+slowNelop1 langs fms0 =
+  let fms = homogenize langs fms0
       seps = langpartition langs fms
       fvlist = map Fol.fv seps
-      vars = List.filter (\x -> length (List.filter (elem x) fvlist) >= 2) (Set.unions fvlist) 
+      vars = List.filter (\x -> length (List.filter (elem x) fvlist) >= 2) (Set.unions fvlist)
   in slowNelopRefute vars (zip langs seps)
 
 slowNelop :: [Lang] -> Formula -> Bool
 slowNelop langs fm = List.all (slowNelop1 langs) (dnf $ simp $ Not fm)
- where 
+ where
   simp = tracef "simp" Skolem.simplify
   dnf = tracef "dnf" Prop.simpdnf
 
@@ -204,31 +204,31 @@ slowNelopDlo = slowNelop (addDefault [dloLang])
 findasubset :: ([a] -> Maybe b) -> Int -> [a] -> Maybe b
 findasubset p 0 _ = p []
 findasubset _ _ [] = Nothing
-findasubset p m (h:t) = 
+findasubset p m (h:t) =
   case findasubset (p . (h:)) (m-1) t of
     Just x -> Just x
     Nothing -> findasubset p m t
 
 findsubset :: ([a] -> Bool) -> [a] -> Maybe [a]
-findsubset p l = 
+findsubset p l =
   List.findFirst (\n -> findasubset (\x -> if p x then Just x else Nothing) n l)
             [0 .. length l]
-                   
+
 
 nelopRefute :: [Formula] -> [(Lang, Clause)] -> Bool
-nelopRefute eqs ldseps = 
+nelopRefute eqs ldseps =
   case findsubset (trydps ldseps . map F.opp) eqs of
     Nothing -> False
     Just dj -> List.all (\eq -> nelopRefute (eqs \\ [eq])
                                 (map (\(dps, es) -> (dps, eq:es)) ldseps)) dj
 
 nelop1 :: [Lang] -> Clause -> Bool
-nelop1 langs fms0 = 
-  let fms = homogenize langs fms0 
+nelop1 langs fms0 =
+  let fms = homogenize langs fms0
       seps = langpartition langs fms
       fvlist = map (Set.unions . map Fol.fv) seps
       vars = List.filter (\x -> length (List.filter (elem x) fvlist) >= 2)
-                         (Set.unions fvlist) 
+                         (Set.unions fvlist)
       eqs = map (\(a,b) -> Equal.mkEq (Var a) (Var b)) (List.distinctPairs vars) in
   nelopRefute eqs (zip langs seps)
 

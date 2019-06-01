@@ -1,7 +1,7 @@
 
-{-# OPTIONS_GHC -fno-warn-orphans #-} 
+{-# OPTIONS_GHC -fno-warn-orphans #-}
 
-module ATP.Util.Prelude 
+module ATP.Util.Prelude
   ( module Prelude
   , Impossible(..)
   , throwImpossible

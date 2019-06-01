@@ -19,9 +19,9 @@ module ATP.Decidable
   )
 where
 
-#include "undefined.h" 
+#include "undefined.h"
 
-import ATP.Util.Prelude 
+import ATP.Util.Prelude
 import qualified ATP.Dp as Dp
 import qualified ATP.Formula as F
 import ATP.FormulaSyn
@@ -38,7 +38,7 @@ import qualified Data.Map as Map
 -- * Decidable Problems
 
 aedecide :: Formula -> Bool
-aedecide fm = 
+aedecide fm =
   let sfm = Skolem.skolemize (Not fm)
       fvs = Fol.fv sfm
       (cnsts, funcs) = List.partition (\(_, ar) -> ar == 0) (Fol.functions sfm) in
@@ -47,20 +47,20 @@ aedecide fm =
       cntms = map (\(c, _) -> Fn c []) consts
       alltups = Herbrand.groundtuples cntms [] 0 (length fvs)
       cjs = Prop.simpcnf sfm
-      grounds = map (\tup -> Set.image  
+      grounds = map (\tup -> Set.image
                                (Set.image (Fol.apply (Map.fromList $ zip fvs tup)))
                                cjs) alltups in
   not $ Dp.dpll $ Set.unions grounds
 
 separate :: Var -> [Formula] -> Formula
-separate x cjs = 
+separate x cjs =
   let (yes, no) = List.partition (elem x . Fol.fv) cjs in
   if null yes then F.listConj no
   else if null no then Ex x (F.listConj yes)
   else And (Ex x (F.listConj yes)) (F.listConj no)
 
 pushquant :: Var -> Formula -> Formula
-pushquant x p = 
+pushquant x p =
   if not (List.elem x (Fol.fv p)) then p else
   let djs = Prop.purednf (Prop.nnf p) in
   F.listDisj (map (separate x) djs)
@@ -69,7 +69,7 @@ miniscope :: Formula -> Formula
 miniscope fm = case fm of
   Not p -> Not(miniscope p)
   And p q -> And (miniscope p) (miniscope q)
-  Or p q -> Or (miniscope p) (miniscope q) 
+  Or p q -> Or (miniscope p) (miniscope q)
   All x p -> Not (pushquant x (Not (miniscope p)))
   Ex x p -> pushquant x (miniscope p)
   _ -> fm
@@ -80,36 +80,36 @@ wang = aedecide . miniscope . Prop.nnf . Prop.simplify
 atom :: Pred -> Var -> Formula
 atom p x = Atom (R p [Var x])
 
-premiss_A :: (Pred, Pred) -> Formula 
+premiss_A :: (Pred, Pred) -> Formula
 premiss_A (p, q) = All "x" (Imp (atom p "x") (atom q "x"))
 
-premiss_E :: (Pred, Pred) -> Formula 
+premiss_E :: (Pred, Pred) -> Formula
 premiss_E (p, q) = All "x" (Imp (atom p "x") (Not (atom q "x")))
 
-premiss_I :: (Pred, Pred) -> Formula 
+premiss_I :: (Pred, Pred) -> Formula
 premiss_I (p, q) = Ex "x" (And (atom p "x") (atom q "x"))
 
-premiss_O :: (Pred, Pred) -> Formula 
+premiss_O :: (Pred, Pred) -> Formula
 premiss_O (p, q) = Ex "x" (And (atom p "x") (Not (atom q "x")))
 
 anglicizePremiss :: Formula -> String
-anglicizePremiss fm = 
-  case fm of 
+anglicizePremiss fm =
+  case fm of
    All _ (Imp (Atom(R p _)) (Atom(R q _))) -> "all " ++ p ++ " are " ++ q
    All _ (Imp (Atom(R p _)) (Not(Atom(R q _)))) -> "no " ++ p ++ " are " ++ q
    Ex _ (And (Atom(R p _)) (Atom(R q _))) -> "some " ++ p ++ " are " ++ q
    Ex _ (And (Atom(R p _)) (Not(Atom(R q _)))) -> "some " ++ p ++ " are not " ++ q
-   _ -> __IMPOSSIBLE__ 
+   _ -> __IMPOSSIBLE__
 
 anglicizeSyllogism :: Formula -> String
 anglicizeSyllogism (Imp (And t1 t2) t3) =
  "If " ++ anglicizePremiss t1 ++ " and " ++ anglicizePremiss t2 ++
  ", then " ++ anglicizePremiss t3
-anglicizeSyllogism _ = __IMPOSSIBLE__ 
+anglicizeSyllogism _ = __IMPOSSIBLE__
 
 allPossibleSyllogisms :: [Formula]
 allPossibleSyllogisms =
- let sylltypes = [premiss_A, premiss_E, premiss_I, premiss_O] 
+ let sylltypes = [premiss_A, premiss_E, premiss_I, premiss_O]
      prems1 = List.allPairs id sylltypes [("M","P"), ("P","M")]
      prems2 = List.allPairs id sylltypes [("S","M"), ("M","S")]
      prems3 = List.allPairs id sylltypes [("S","P")] in
@@ -127,7 +127,7 @@ allValidSyllogisms' :: [Formula]
 allValidSyllogisms' = List.filter aedecide allPossibleSyllogisms'
 
 alltuples :: Int -> [a] -> [[a]]
-alltuples n l = 
+alltuples n l =
   if n == 0 then [[]] else
   let tups = alltuples (n-1) l in
   List.allPairs (:) l tups
@@ -163,7 +163,7 @@ decideFinite n fm =
   List.all (\md -> Fol.holds md Map.empty fm') interps
 
 limmeson :: Int -> Formula -> Maybe (Env, Int, Int)
-limmeson n fm = 
+limmeson n fm =
   let cls = Prop.simpcnf $ Skolem.specialize $ Skolem.pnf fm
       rules = List.concat (map Meson.contrapositives cls) in
   Meson.mexpand rules [] Bot Just (Map.empty, n, 0)
@@ -182,10 +182,10 @@ decideFmp fm =
 
 decideMonadic :: Formula -> Bool
 decideMonadic fm =
-  let funcs = Fol.functions fm 
-      preds = Fol.predicates fm 
+  let funcs = Fol.functions fm
+      preds = Fol.predicates fm
       (monadic, other) = List.partition (\(_, ar) -> ar == 1) preds in
-  if funcs /= [] || List.any (\(_, ar) -> ar > 1) other 
+  if funcs /= [] || List.any (\(_, ar) -> ar > 1) other
   then error "Not in the monadic subset" else
   let n = 2 `Lib.pow` length monadic in
   decideFinite n fm

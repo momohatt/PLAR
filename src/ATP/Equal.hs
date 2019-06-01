@@ -9,7 +9,7 @@ module ATP.Equal
   )
 where
 
-import ATP.Util.Prelude 
+import ATP.Util.Prelude
 import qualified ATP.Fol as Fol
 import qualified ATP.Formula as F
 import ATP.FormulaSyn
@@ -28,10 +28,10 @@ destEq (Atom(R "=" [s,t])) = (s, t)
 destEq _ = error "not an equality"
 
 lhs :: Formula -> Term
-lhs = fst . destEq 
+lhs = fst . destEq
 
 rhs :: Formula -> Term
-rhs = snd . destEq 
+rhs = snd . destEq
 
 predicates :: Formula -> [(Pred, Int)]
 predicates = F.atomUnion (\(R p args) -> [(p, length args)])
@@ -59,18 +59,18 @@ predicateCongruence (p,n) =
  [foldr All (ant ⊃ con) (argnamesX ++ argnamesY)]
 
 equivalenceAxioms :: [Formula]
-equivalenceAxioms = 
+equivalenceAxioms =
   [ [$form| ∀ x. x = x |]
   , [$form| ∀ x y z. x = y ∧ x = z ⊃ y = z |]
   ]
 
 equalitize :: Formula -> Formula
-equalitize fm = 
+equalitize fm =
   let allpreds = predicates fm in
   if not (elem ("=",2) allpreds) then fm else
   let preds = allpreds \\ [("=",2)]
       funcs = Fol.functions fm
-      axioms = foldr (Set.union . functionCongruence) 
+      axioms = foldr (Set.union . functionCongruence)
                  (foldr (Set.union . predicateCongruence) equivalenceAxioms preds)
                    funcs in
   F.listConj axioms ⊃ fm

@@ -1,10 +1,10 @@
 
-{- 
+{-
 This file contains utility functions not provided by the Haskell
 standard library.  Most mirror functions in Harrison's lib.ml
--} 
+-}
 
-module ATP.Util.Lib 
+module ATP.Util.Lib
   ( time
   , timeIO
   , pow
@@ -15,7 +15,7 @@ module ATP.Util.Lib
     -- Map
   , (↦)
   , (⟾)
-  ) 
+  )
 where
 
 import Prelude
@@ -26,11 +26,11 @@ import qualified System.CPUTime as Time
 import qualified Text.Printf as Printf
 
 timeIO :: Show a => IO a -> IO a
-timeIO a = do 
+timeIO a = do
   start <- Time.getCPUTime
   v <- a
   end <- Time.getCPUTime
-  let diff :: Double = (fromIntegral (end - start)) / (1E12) 
+  let diff :: Double = (fromIntegral (end - start)) / (1E12)
   _ <- Printf.printf "Computation time: %0.4f sec\n" diff
   return v
 
@@ -58,15 +58,15 @@ funpow n f x = iterate f x !! n
 decreasing :: Ord b => (a -> b) -> a -> a -> Ordering
 decreasing f x y = compare (f y) (f x)
 
-substringIndex :: String -> String -> Maybe Int 
-substringIndex s1 s2 = 
+substringIndex :: String -> String -> Maybe Int
+substringIndex s1 s2 =
   let ind _ [] = Nothing
       ind n s = if take n s == s1 then Just n else ind (n+1) (tail s) in
   ind 0 s2
- 
+
 (↦) :: Ord a => a -> b -> Map a b -> Map a b
 (↦) = Map.insert
 
 (⟾) :: Ord a => a -> b -> Map a b
-(⟾) = Map.singleton 
+(⟾) = Map.singleton
 

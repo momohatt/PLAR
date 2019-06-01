@@ -5,7 +5,7 @@ module ATP.Qelim
   )
 where
 
-import Prelude 
+import Prelude
 import qualified ATP.Decidable as Decidable
 import qualified ATP.Fol as Fol
 import qualified ATP.Formula as F
@@ -13,11 +13,11 @@ import ATP.FormulaSyn
 import qualified ATP.Skolem as Skolem
 import qualified Data.List as List
 
-lift :: (Vars -> Formula -> Formula) 
-     -> (Formula -> Formula) 
-     -> (Vars -> Formula -> Formula) 
-     -> Formula -> Formula 
-lift afn nfn qfn fm = 
+lift :: (Vars -> Formula -> Formula)
+     -> (Formula -> Formula)
+     -> (Vars -> Formula -> Formula)
+     -> Formula -> Formula
+lift afn nfn qfn fm =
   Skolem.simplify $ qelift (Fol.fv fm) (Decidable.miniscope fm)
   where qelift vars f = case f of
           Atom _ -> afn vars f
@@ -29,19 +29,19 @@ lift afn nfn qfn fm =
           All x p -> (¬) $ qelift vars $ (∃) x $ (¬) p
           Ex x p -> let djs = F.disjuncts $ nfn $ qelift (x:vars) p in
                         F.listDisj (map (qelim (qfn vars) x) djs)
-          _ -> f 
+          _ -> f
 
-qelim :: (Formula -> Formula) -> Var -> Formula -> Formula 
-qelim bfn x p = 
-  let cjs = F.conjuncts p 
+qelim :: (Formula -> Formula) -> Var -> Formula -> Formula
+qelim bfn x p =
+  let cjs = F.conjuncts p
       (ycjs, ncjs) = List.partition (List.elem x . Fol.fv) cjs in
   if null ycjs then p else
   let q = bfn (Ex x (F.listConj ycjs)) in
   foldr And q ncjs
 
-cnnf :: (Formula -> Formula) -> Formula -> Formula 
+cnnf :: (Formula -> Formula) -> Formula -> Formula
 cnnf lfn = Skolem.simplify . cnnf' . Skolem.simplify
-  where cnnf' f = case f of 
+  where cnnf' f = case f of
           [$form| $p ∧ $q |] -> p' ∧ q'
             where p' = cnnf' p
                   q' = cnnf' q

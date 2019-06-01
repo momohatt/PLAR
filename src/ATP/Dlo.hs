@@ -11,7 +11,7 @@ module ATP.Dlo
   )
 where
 
-#include "undefined.h" 
+#include "undefined.h"
 
 import ATP.Util.Prelude
 import qualified ATP.Dp as Dp
@@ -27,65 +27,65 @@ import ATP.Util.ListSet ((\\))
 import qualified ATP.Util.Parse as P
 import qualified Data.Char as Char
 
-lfn :: Formula -> Formula 
+lfn :: Formula -> Formula
 lfn [$form| ¬ ($s < $t) |] = [$form| $s = $t ∨ $t < $s |]
 lfn [$form| ¬ ($s = $t) |] = [$form| $s < $t ∨ $t < $s |]
 lfn fm = fm
 
-dloBasic :: Formula -> Formula 
-dloBasic (Ex x p) = 
-  let x' = Var x 
-      cjs = F.conjuncts p \\ [ x' ≡ x' ] 
+dloBasic :: Formula -> Formula
+dloBasic (Ex x p) =
+  let x' = Var x
+      cjs = F.conjuncts p \\ [ x' ≡ x' ]
       left (Atom (R "<" [l, _])) = l
-      left _ = __IMPOSSIBLE__ 
+      left _ = __IMPOSSIBLE__
       right (Atom (R "<" [_, r])) = r
-      right _ = __IMPOSSIBLE__ 
+      right _ = __IMPOSSIBLE__
   in case List.find Equal.isEq cjs of
     Just eqn -> let (s, t) = Equal.destEq eqn
                     y = if s == x' then t else s in
                 F.listConj $ map (Fol.apply $ x ⟾ y) (cjs \\ [eqn])
     Nothing -> if elem (x' ≺ x') cjs then Bot else
-               let (lefts, rights) = List.partition (\a -> right a == x') cjs 
+               let (lefts, rights) = List.partition (\a -> right a == x') cjs
                    ls = map left lefts
                    rs = map right rights in
                F.listConj (List.allPairs (≺) ls rs)
-dloBasic _ = error "dloBasic" 
+dloBasic _ = error "dloBasic"
 
-afn :: Vars -> Formula -> Formula 
-afn xs f = case f of 
+afn :: Vars -> Formula -> Formula
+afn xs f = case f of
   [$form| $s ≤ $t |] -> afn xs [$form| ¬ ($t < $s) |]
   [$form| $s ≥ $t |] -> afn xs [$form| ¬ ($s < $t) |]
   [$form| $s > $t |] -> afn xs [$form| $t ≺ $s |]
-  [$form| $n < $m |] -> case (n, m) of 
+  [$form| $n < $m |] -> case (n, m) of
     (Num n', Num m') -> if n' < m' then (⊤) else (⊥)
     _ -> f
-  [$form| ¬ ($n < $m) |] -> case (n, m) of 
+  [$form| ¬ ($n < $m) |] -> case (n, m) of
     (Num n', Num m') -> if n' > m' then (⊤) else (⊥)
     _ -> f
   _ -> f
 
-qelim :: Formula ->Formula 
+qelim :: Formula ->Formula
 qelim = Qelim.lift afn (Prop.dnf . Qelim.cnnf lfn) (const dloBasic)
 
 -- * Validity
 
 destNumeral :: Term -> Rational
 destNumeral (Fn ns []) = P.parse ns
-destNumeral _ = __IMPOSSIBLE__ 
+destNumeral _ = __IMPOSSIBLE__
 
 isNumeral :: Term -> Bool
-isNumeral (Fn ns []) 
+isNumeral (Fn ns [])
   | head ns == '-' = List.all Char.isDigit (tail ns)
   | otherwise = List.all Char.isDigit ns
 isNumeral _ = False
 
 reduce :: Formula -> Formula
-reduce f@(Atom (R p [s,t])) | isNumeral s && isNumeral t = 
+reduce f@(Atom (R p [s,t])) | isNumeral s && isNumeral t =
   let s' = destNumeral s
       t' = destNumeral t
-  in case p of 
-       "=" -> if s' == t' then Top else Bot 
-       "<" -> if s' < t' then Top else Bot 
+  in case p of
+       "=" -> if s' == t' then Top else Bot
+       "<" -> if s' < t' then Top else Bot
        _ -> f
 reduce [$form| $p ∧ $q |] = reduce p ∧ reduce q
 reduce [$form| $p ⊃ $q |] = reduce p ⊃ reduce q

@@ -1,7 +1,7 @@
 
 -- Set operations on lists.
 
-module ATP.Util.ListSet 
+module ATP.Util.ListSet
   ( ListSet
   , setify
   , uniq
@@ -16,16 +16,16 @@ module ATP.Util.ListSet
   , allSubsets
   , allNonemptySubsets
   , allSets
-  ) 
+  )
 where
 
 import Prelude hiding (subtract)
-import qualified List
+import qualified Data.List as List
 
 type ListSet a = [a]
 
 setify :: Ord a => [a] -> [a]
-setify = uniq . List.sortBy compare 
+setify = uniq . List.sort
 
 -- Remove duplicates in a sorted list
 
@@ -39,7 +39,7 @@ union :: Ord a => [a] -> [a] -> [a]
 union s1 s2 = union' (setify s1) (setify s2)
     where union' [] l2 = l2
           union' l1 [] = l1
-          union' l1@(h1:t1) l2@(h2:t2) = 
+          union' l1@(h1:t1) l2@(h2:t2) =
             case compare h1 h2 of
               EQ -> h1 : union' t1 t2
               LT -> h1 : union' t1 l2
@@ -52,7 +52,7 @@ intersect :: Ord a => [a] -> [a] -> [a]
 intersect s1 s2 = intersect' (setify s1) (setify s2)
     where intersect' [] _l2 = []
           intersect' _l1 [] = []
-          intersect' l1@(h1:t1) l2@(h2:t2) = 
+          intersect' l1@(h1:t1) l2@(h2:t2) =
             case compare h1 h2 of
               EQ -> h1 : intersect' t1 t2
               LT -> intersect' t1 l2
@@ -65,7 +65,7 @@ intersect s1 s2 = intersect' (setify s1) (setify s2)
 s1 \\ s2 = subtract (setify s1) (setify s2)
     where subtract [] _l2 = []
           subtract l1 [] = l1
-          subtract l1@(h1:t1) l2@(h2:t2) = 
+          subtract l1@(h1:t1) l2@(h2:t2) =
             case compare h1 h2 of
               EQ -> subtract t1 t2
               LT -> h1 : subtract t1 l2
@@ -96,7 +96,7 @@ psubset l1 l2 = psubset' (setify l1) (setify l2)
                                        | otherwise = subset l1' t2
 
 unions :: Ord a => [[a]] -> [a]
-unions = setify . List.concat 
+unions = setify . List.concat
 
 allSubsets :: [a] -> [[a]]
 allSubsets [] = [[]]

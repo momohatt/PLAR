@@ -8,7 +8,7 @@ module ATP.Skolem
   , skolem
   , skolemize
   , askolemize
-  ) 
+  )
 where
 
 import Prelude hiding (print)
@@ -19,7 +19,7 @@ import ATP.Util.Lib((⟾))
 import qualified Data.List as List
 
 simplify :: Formula -> Formula
-simplify fm = case fm of 
+simplify fm = case fm of
   [$form| ¬ $p |] -> simplify1 $ (¬) $ simplify p
   [$form| $p ∧ $q |] -> simplify1 $ simplify p ∧ simplify q
   [$form| $p ∨ $q |] -> simplify1 $ simplify p ∨ simplify q
@@ -36,7 +36,7 @@ simplify1 fm = case fm of
   _ -> Prop.simplify1 fm
 
 nnf :: Formula -> Formula
-nnf fm = case fm of 
+nnf fm = case fm of
   [$form| $p ∧ $q |] -> nnf p ∧ nnf q
   [$form| $p ∨ $q |] -> nnf p ∨ nnf q
   [$form| $p ⊃ $q |] -> np' ∨ nnf q
@@ -67,9 +67,9 @@ nnf fm = case fm of
   [$form| ¬ (∃ $x. $p) |] -> (¥) x (nnf $ (¬) p)
   _ -> fm
 
-{- 
+{-
 nnf $ parse "(∀ x. P(x)) ⊃ ((∃ y. Q(y)) ⇔ ∃ z. P(z) ∧ Q(z))"
--} 
+-}
 
 pnf :: Formula -> Formula
 pnf = prenex . nnf . simplify
@@ -95,35 +95,35 @@ pullquants fm = case fm of
   [$form| $p ∨ (∃ $y. $q) |] -> pullq (False,True) fm (∃) (∨) y y p q
   _ -> fm
 
-pullq :: (Bool, Bool) -> Formula 
-      -> (Var -> Formula -> Formula) 
+pullq :: (Bool, Bool) -> Formula
+      -> (Var -> Formula -> Formula)
       -> (Formula -> Formula -> Formula) -> Var -> Var
       -> Formula -> Formula -> Formula
 pullq (l,r) fm quant op x y p q =
-  let z = Fol.variant x (Fol.fv fm) 
+  let z = Fol.variant x (Fol.fv fm)
       p' = if l then Fol.apply (x ⟾ Var z) p else p
       q' = if r then Fol.apply (y ⟾ Var z) q else q in
   quant z (pullquants(op p' q'))
 
-{- 
+{-
 print $ pullquants [$form| (∀ y. Q(y)) ∧ (∀ x. P(y)) |]
--} 
+-}
 
-specialize :: Formula -> Formula 
+specialize :: Formula -> Formula
 specialize (All _ p) = specialize p
 specialize fm = fm
 
-skolemize :: Formula -> Formula 
+skolemize :: Formula -> Formula
 skolemize = specialize . pnf . askolemize
 
-askolemize :: Formula -> Formula 
+askolemize :: Formula -> Formula
 askolemize fm = fst ((skolem $ nnf $ simplify fm) (map fst (Fol.functions fm)))
 
 skolem :: Formula -> Vars -> (Formula, [Func])
 skolem fm fns = case fm of
     Ex y p ->
-        let xs = Fol.fv(fm) 
-            f = Fol.variant (if null xs then "c_" ++ y else "f_" ++ y) fns 
+        let xs = Fol.fv(fm)
+            f = Fol.variant (if null xs then "c_" ++ y else "f_" ++ y) fns
             fx = Fn f (map Var xs) in
         skolem (Fol.apply (y ⟾ fx) p) (f:fns)
     All x p -> let (p', fns') = skolem p fns in (All x p', fns')
@@ -131,16 +131,16 @@ skolem fm fns = case fm of
     Or p q -> skolem2 Or (p, q) fns
     _ -> (fm, fns)
 
-skolem2 :: (Formula -> Formula -> Formula) -> (Formula, Formula) 
+skolem2 :: (Formula -> Formula -> Formula) -> (Formula, Formula)
         -> Vars -> (Formula, [Func])
 skolem2 cons (p,q) fns =
-  let (p', fns') = skolem p fns 
+  let (p', fns') = skolem p fns
       (q', fns'') = skolem q fns' in
   (cons p' q', fns'')
 
-{- 
-:m +ATP.Util.Parse 
+{-
+:m +ATP.Util.Parse
 print $ skolemize [$form| ∃ y. x < y ⊃ ∀ u. ∃ v. x * u < y * v |]
 print $ skolemize [$form| ∀ x. P(x) ⊃ (∃ y z. Q(y) ∨ ~(∃ z. P(z) ∧ Q(z))) |]
--} 
+-}
 

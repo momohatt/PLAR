@@ -17,26 +17,26 @@ import ATP.Util.Prelude
 import qualified ATP.Formula as F
 import ATP.FormulaSyn
 import qualified ATP.Prop as P
-import qualified ATP.Util.ListSet as Set 
+import qualified ATP.Util.ListSet as Set
 import qualified ATP.Util.Tuple as Tuple
 
-ramsey :: Int -> Int -> Int -> Formula 
-ramsey s t n = 
+ramsey :: Int -> Int -> Int -> Formula
+ramsey s t n =
   let vertices = [1 .. n]
       yesgrps = map (Set.allSets 2) (Set.allSets s vertices)
-      nogrps = map (Set.allSets 2) (Set.allSets t vertices) 
-      e [m, n'] = Atom $ R ("p_" ++ show m ++ "_" ++ show n') [] 
-      e _ = __IMPOSSIBLE__ 
+      nogrps = map (Set.allSets 2) (Set.allSets t vertices)
+      e [m, n'] = Atom $ R ("p_" ++ show m ++ "_" ++ show n') []
+      e _ = __IMPOSSIBLE__
   in (F.listDisj $ map (F.listConj . map e) yesgrps)
        ∨ (F.listDisj $ map (F.listConj . map ((¬) . e)) nogrps)
 
-halfsum :: Formula -> Formula -> Formula 
+halfsum :: Formula -> Formula -> Formula
 halfsum x y = x ⇔ (¬) y
 
-halfcarry :: Formula -> Formula -> Formula 
+halfcarry :: Formula -> Formula -> Formula
 halfcarry = (∧)
 
-halfAdder :: Formula -> Formula -> Formula 
+halfAdder :: Formula -> Formula -> Formula
           -> Formula -> Formula
 halfAdder x y s c = (s ⇔ halfsum x y) ∧ (c ⇔ halfcarry x y)
 
@@ -48,7 +48,7 @@ carry x y z = (x ∧ y) ∨ ((x ∨ y) ∧ z)
 csum :: Formula -> Formula -> Formula -> Formula
 csum x y z = halfsum (halfsum x y) z
 
-fa :: Formula -> Formula -> Formula -> Formula 
+fa :: Formula -> Formula -> Formula -> Formula
    -> Formula -> Formula
 fa x y z s c = (s ⇔ csum x y z) ∧ (c ⇔ carry x y z)
 
@@ -58,7 +58,7 @@ conjoin :: Wire -> [Int] -> Formula
 conjoin f = F.listConj . map f
 
 ripplecarry :: Wire -> Wire -> Wire -> Wire -> Wire
-ripplecarry x y c out n = 
+ripplecarry x y c out n =
   conjoin (\i -> fa (x i) (y i) (c i) (out i) (c (i+1))) [0 .. n-1]
 
 mkIndex :: Var -> Int -> Formula
@@ -76,18 +76,18 @@ ripplecarry1 x y c out n =
   P.simplify
    (ripplecarry x y (\i -> if i == 0 then Top else c i) out n)
 
-mux :: Formula -> Formula -> Formula -> Formula 
+mux :: Formula -> Formula -> Formula -> Formula
 mux sel in0 in1 = ((¬) sel ∧ in0) ∨ (sel ∧ in1)
 
 offset :: Int -> Wire -> Wire
-offset n x i = x(n + i) 
+offset n x i = x(n + i)
 
-carryselect :: Wire -> Wire -> Wire -> Wire -> Wire -> Wire -> Wire 
+carryselect :: Wire -> Wire -> Wire -> Wire -> Wire -> Wire -> Wire
             -> Wire -> Int -> Int -> Formula
 carryselect x y c0 c1 s0 s1 c s n k =
-  let k' = min n k 
-      fm = (ripplecarry0 x y c0 s0 k' ∧ ripplecarry1 x y c1 s1 k') 
-           ∧ (c k' ⇔ mux (c 0) (c0 k') (c1 k')) 
+  let k' = min n k
+      fm = (ripplecarry0 x y c0 s0 k' ∧ ripplecarry1 x y c1 s1 k')
+           ∧ (c k' ⇔ mux (c 0) (c0 k') (c1 k'))
            ∧ conjoin (\i -> s i ⇔ mux (c 0) (s0 i) (s1 i)) [0 .. k'-1] in
   if k' < k then fm else
      fm ∧ carryselect
@@ -97,10 +97,10 @@ carryselect x y c0 c1 s0 s1 c s n k =
 
 mkAdderTest :: Int -> Int -> Formula
 mkAdderTest n k =
-  let (x, y, c, s, c0, s0, c1, s1, c2, s2) = 
+  let (x, y, c, s, c0, s0, c1, s1, c2, s2) =
         Tuple.map10 mkIndex ("x", "y", "c", "s", "c0", "s0", "c1", "s1", "c2", "s2")
   in (carryselect x y c0 c1 s0 s1 c s n k ∧ (¬) (c 0) ∧
-     (ripplecarry0 x y c2 s2 n) ⊃ 
+     (ripplecarry0 x y c2 s2 n) ⊃
        (c n ⇔ c2 n) ∧ conjoin (\i -> s i ⇔ s2 i) [0 .. n-1])
 
 rippleshift :: Wire -> Wire -> Wire -> Formula -> Wire -> Wire
@@ -114,7 +114,7 @@ multiplier :: Wire2 -> Wire2 -> Wire2 -> Wire -> Wire
 multiplier x u v out n =
   if n == 1 then (out 0 ⇔ x 0 0) ∧ (¬) (out 1) else
   P.simplify
-   ((out 0 ⇔ x 0 0) 
+   ((out 0 ⇔ x 0 0)
     ∧ rippleshift
          (\i -> if i == n-1 then Bot else x 0 (i + 1))
          (x 1) (v 2) (out 1) (u 2) n ∧

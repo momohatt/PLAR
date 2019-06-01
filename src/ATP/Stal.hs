@@ -1,13 +1,13 @@
 
 -- * Stålmark's method
 
-module ATP.Stal 
+module ATP.Stal
   ( stalmarck )
 where
 
-#include "undefined.h" 
+#include "undefined.h"
 
-import ATP.Util.Prelude 
+import ATP.Util.Prelude
 import qualified ATP.DefCnf as Cnf
 import qualified ATP.Formula as F
 import ATP.FormulaSyn
@@ -32,12 +32,12 @@ type Erf = (Part, TrigMap)
 
 name :: Rel -> String
 name (R f []) = f
-name _ = __IMPOSSIBLE__ 
+name _ = __IMPOSSIBLE__
 
 triplicate :: Formula -> (Formula, [Formula])
-triplicate fm = 
+triplicate fm =
   let fm' = Prop.nenf fm
-      n = 1 + F.overatoms (Cnf.maxVarIndex "p_" . name) fm' 0 
+      n = 1 + F.overatoms (Cnf.maxVarIndex "p_" . name) fm' 0
       (p, defs, _) = Cnf.maincnf (fm', Map.empty, n)
   in (p, map (snd . snd) (Map.toList defs))
 
@@ -45,7 +45,7 @@ atom :: Formula -> Formula
 atom lit = if F.negative lit then F.opp lit else lit
 
 align :: Pair -> Pair
-align (p, q) = 
+align (p, q) =
   if atom p < atom q then align (q, p) else
   if F.negative p then (F.opp p, F.opp q) else (p, q)
 
@@ -55,7 +55,7 @@ equate2 (p, q) eqv =  UF.equate (F.opp p, F.opp q) (UF.equate (p, q) eqv)
 irredundant :: Part -> Pairs -> Pairs
 irredundant rel eqs = case eqs of
   [] -> []
-  (p, q) : oth -> 
+  (p, q) : oth ->
     if UF.canonize rel p == UF.canonize rel q then irredundant rel oth
     else Set.insert (p, q) $ irredundant (equate2 (p, q) rel) oth
 
@@ -65,7 +65,7 @@ consequences peq@(p, q) fm eqs =
   irredundant (equate2 peq UF.unequal) (filter follows eqs)
 
 triggers :: Formula -> Triggers
-triggers fm = 
+triggers fm =
   let poslits = Set.insert (⊤) (map Atom $ Prop.atoms fm)
       lits = poslits ∪ map F.opp poslits
       pairs = List.allPairs (,) lits lits
@@ -80,16 +80,16 @@ trigger fm = case fm of
   [$form| $x ⇔ $y ∨ $z |] -> instTrigger (x, y, z) trigOr
   [$form| $x ⇔ $y ⊃ $z |] -> instTrigger (x, y, z) trigImp
   [$form| $x ⇔ ($y ⇔ $z) |] -> instTrigger (x, y, z) trigIff
-  _ -> __IMPOSSIBLE__ 
- where 
+  _ -> __IMPOSSIBLE__
+ where
   trigAnd = triggers [$form| p ⇔ q ∧ r |]
   trigOr = triggers [$form| p ⇔ q ∨ r |]
   trigImp = triggers [$form| p ⇔ q ⊃ r |]
   trigIff = triggers [$form| p ⇔ (q ⇔ r) |]
   ddnegate [$form| ¬ ¬ $p |] = p
   ddnegate f = f
-  instfn (x, y, z) = 
-    let subfn = Map.fromList [ (R "p" [], x), (R "q" [], y), (R "r" [], z) ] 
+  instfn (x, y, z) =
+    let subfn = Map.fromList [ (R "p" [], x), (R "q" [], y), (R "r" [], z) ]
     in ddnegate . Prop.apply subfn
   inst2fn i (p, q) = align $ (instfn i p, instfn i q)
   instnfn i (a, c) = (inst2fn i a, map (inst2fn i) c)
@@ -98,14 +98,14 @@ trigger fm = case fm of
 relevance :: Triggers -> TrigMap
 relevance trigs =
   let insertRelevant :: Formula -> Trigger -> TrigMap -> TrigMap
-      insertRelevant p trg f = 
+      insertRelevant p trg f =
         Map.insert p (Set.insert trg $ maybe [] id (Map.lookup p f)) f
       insertRelevant2 trg@((p,q), _) = insertRelevant p trg . insertRelevant q trg
-  in foldr insertRelevant2 Map.empty trigs 
+  in foldr insertRelevant2 Map.empty trigs
 
 equatecons :: Pair -> Erf -> (Pairs, Erf)
 equatecons (p0, q0) erf@(eqv, rfn) =
-  let p = UF.canonize eqv p0 
+  let p = UF.canonize eqv p0
       q = UF.canonize eqv q0
   in if p == q then ([], erf) else
   let p' = UF.canonize eqv (F.opp p0)
@@ -124,9 +124,9 @@ equatecons (p0, q0) erf@(eqv, rfn) =
 zeroSaturate :: Erf -> Pairs -> Erf
 zeroSaturate erf assigs = case assigs of
   [] -> erf
-  (p, q) : ts -> 
+  (p, q) : ts ->
    let (news, erf') = equatecons (p, q) erf in
-   zeroSaturate erf' (ts ∪ news)             
+   zeroSaturate erf' (ts ∪ news)
 
 zeroSaturateAndCheck :: Erf -> Pairs -> Erf
 zeroSaturateAndCheck erf trigs =
@@ -148,7 +148,7 @@ equateset s0 eqfn = case s0 of
 inter :: [Formula] -> Erf -> Erf -> Map Formula [Formula] -> Map Formula [Formula] -> Erf -> Erf
 inter els erf1@(eq1, _) erf2@(eq2, _) rev1 rev2 erf = case els of
   [] -> erf
-  x:xs -> 
+  x:xs ->
     let b1 = UF.canonize eq1 x
         b2 = UF.canonize eq2 x
         s1 = maybe __IMPOSSIBLE__ id (Map.lookup b1 rev1)
@@ -168,7 +168,7 @@ stalIntersect erf1@(eq1, _) erf2@(eq2, _) erf =
   let dom1 = UF.equated eq1
       dom2 = UF.equated eq2
       comdom = dom1 ∩ dom2
-      rev1 = reverseq dom1 eq1 
+      rev1 = reverseq dom1 eq1
       rev2 = reverseq dom2 eq2
   in inter comdom erf1 erf2 rev1 rev2 erf
 
@@ -182,7 +182,7 @@ saturate n erf assigs allvars =
 splits :: Int -> Erf -> [Formula] -> [Formula] -> Erf
 splits n erf@(eqv, _) allvars vars = case vars of
   [] -> erf
-  p : ovars -> 
+  p : ovars ->
     if UF.canonize eqv p /= p then splits n erf allvars ovars else
     let erf0 = saturate (n-1) erf [(p, Not Top)] allvars
         erf1 = saturate (n-1) erf [(p, Top)] allvars
@@ -198,7 +198,7 @@ saturateUpto vars n m trigs assigs =
  if truefalse eqv then return True else saturateUpto vars (n+1) m trigs assigs
 
 stalmarck :: Log m => Formula -> m Bool
-stalmarck fm = 
+stalmarck fm =
   let includeTrig (e, cqs) f = Map.insert e (cqs ∪ maybe [] id (Map.lookup e f)) f
       fm' = Prop.simplify $ (¬) fm
   in if fm' == (⊥) then return True else if fm' == (⊤) then return False else

@@ -1,13 +1,13 @@
 
-module ATP.Intro 
-  ( simplify ) 
+module ATP.Intro
+  ( simplify )
 where
 
 import Prelude
 import ATP.IntroSyn
 
 simplify :: Expr -> Expr
-simplify [$expr| $e1 + $e2 |] = simplify1 [$expr| $e1' + $e2' |] 
+simplify [$expr| $e1 + $e2 |] = simplify1 [$expr| $e1' + $e2' |]
   where e1' = simplify e1
         e2' = simplify e2
 simplify [$expr| $e1 * $e2 |] = simplify1 [$expr| $e1' * $e2' |]

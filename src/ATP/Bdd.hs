@@ -1,5 +1,5 @@
 
-module ATP.Bdd 
+module ATP.Bdd
   ( Bdd
   , taut
   , tests
@@ -8,7 +8,7 @@ where
 
 import ATP.Util.Prelude hiding (and, or)
 import qualified ATP.Dp as Dp
-import ATP.FormulaSyn 
+import ATP.FormulaSyn
 import qualified ATP.Prop as Prop
 import qualified Control.Monad.State as State
 import Control.Monad.State (State)
@@ -37,7 +37,7 @@ type BddState a = State S a
 expandNode :: Index -> BddState Node
 expandNode n = do
   (bdd, _) <- State.get
-  return $ 
+  return $
    if n >= 0 then maybe ("", 1, 1) id (Map.lookup n $ expand bdd)
    else let (p, l, r) = maybe ("", 1, 1) id (Map.lookup (-n) $ expand bdd)
         in (p, -l, -r)
@@ -54,7 +54,7 @@ lookupUnique node = do
       return n
 
 mkNode :: Node -> BddState Index
-mkNode (s, l, r) 
+mkNode (s, l, r)
  | l == r = return l
  | l >= 0 = lookupUnique (s, l, r)
  | otherwise = fmap negate $ lookupUnique (s, -l, -r)
@@ -68,17 +68,17 @@ order bdd p1 p2 = p2 == "" && p1 /= "" || ord bdd p1 p2
 and :: Int -> Int -> BddState Index
 and m1 m2
   | m1 == -1 || m2 == -1 = return (-1)
-  | m1 == 1 = return m2 
-  | m2 == 1 = return m1 
+  | m1 == 1 = return m2
+  | m2 == 1 = return m1
   | otherwise =
     do (bdd, comp) <- State.get
        case (Map.lookup (m1, m2) comp, Map.lookup (m2, m1) comp) of
          (Just n, _) -> return n
          (_, Just n) -> return n
-         _ -> do 
+         _ -> do
            (p1, l1, r1) <- expandNode m1
            (p2, l2, r2) <- expandNode m2
-           let (p, lpair, rpair) 
+           let (p, lpair, rpair)
                  | p1 == p2 = (p1, (l1, l2), (r1, r2))
                  | order bdd p1 p2 = (p1, (l1, m2), (r1, m2))
                  | otherwise = (p2, (m1, l2), (m1, r2))
@@ -132,7 +132,7 @@ taut fm = State.evalState (fromFormula fm) (new (<), Map.empty) == 1
 
 prop_taut_correct :: Property
 prop_taut_correct = Q.label "ATP.Bdd: taut_correct" $
-  Q.forAll (Prop.forms 5) $ \f -> 
+  Q.forAll (Prop.forms 5) $ \f ->
     Dp.dplltaut f == taut f
 
 tests :: IO ()

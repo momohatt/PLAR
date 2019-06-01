@@ -1,5 +1,5 @@
 
-module ATP.Complex 
+module ATP.Complex
   ( Err
   , failwith
   , can
@@ -11,11 +11,11 @@ module ATP.Complex
   , findSign
   , assertSign
   , splitZero
-  , qelim 
+  , qelim
   )
 where
 
-#include "undefined.h" 
+#include "undefined.h"
 
 import ATP.Util.Prelude hiding (div)
 import qualified ATP.Cooper as Cooper
@@ -48,7 +48,7 @@ can (Right _) = True
 tryFind :: (a -> Err b) -> [a] -> Err b
 tryFind _ [] = failwith "tryFind"
 tryFind f (h:t) = do
-  case f h of 
+  case f h of
     Left _ -> tryFind f t
     Right r -> return r
 
@@ -70,31 +70,31 @@ swap True s = case s of
   _ -> s
 
 findSign :: Ctx -> Term -> Err Sign
-findSign sgns p = 
+findSign sgns p =
   let (p', swf) = P.monic p in
-  case lookup p' sgns of 
+  case lookup p' sgns of
     Nothing -> failwith "findSign"
     Just sgn -> return $ swap swf sgn
 
 assertSign :: Ctx -> (Term, Sign) -> Err Ctx
-assertSign sgns (p, s) = 
+assertSign sgns (p, s) =
   if p == P.zero then if s == Zero then return sgns else failwith "assertSign" else
   let (p', swf) = P.monic p
       s' = swap swf s
-      s0 = maybe s' id (lookup p' sgns) 
+      s0 = maybe s' id (lookup p' sgns)
   in if s' == s0 || s0 == Nonzero && (s' == Positive || s' == Negative)
      then return $ (p', s') : (sgns \\ [(p', s0)]) else failwith "assertSign"
 
 -- * Main algorithm
 
 splitZero :: Ctx -> Term -> (Ctx -> Err Formula) -> (Ctx -> Err Formula) -> Err Formula
-splitZero sgns pol contZ contN = 
+splitZero sgns pol contZ contN =
   (do z <- findSign sgns pol
       (if z == Zero then contZ else contN) sgns)
    `catchError` handle
- where 
-  handle "findSign" = 
-    let eq = Atom $ R "=" [pol, P.zero] in 
+ where
+  handle "findSign" =
+    let eq = Atom $ R "=" [pol, P.zero] in
     do ctx1 <- assertSign sgns (pol, Zero)
        f1 <- contZ ctx1
        ctx2 <- assertSign sgns (pol, Nonzero)
@@ -103,14 +103,14 @@ splitZero sgns pol contZ contN =
   handle s = failwith s
 
 polyNonzero :: Vars -> Ctx -> Term -> Err Formula
-polyNonzero vars sgns pol = 
+polyNonzero vars sgns pol =
   let cs = P.coefficients vars pol
       (dcs, ucs) = List.partition (can . findSign sgns) cs
-  in do 
+  in do
     dcs' <- mapM (findSign sgns) dcs
-    return $ 
+    return $
      if List.any (/= Zero) dcs' then (⊤)
-     else if null ucs then (⊥) 
+     else if null ucs then (⊥)
      else F.listDisj $ map ((¬) . flip Equal.mkEq P.zero) ucs
 
 polyNondiv :: Vars -> Ctx -> Term -> Term -> Err Formula
@@ -120,21 +120,21 @@ polyNondiv vars sgns p s = polyNonzero vars sgns r
 cqelim' :: Vars -> ([Term], [Term]) -> Ctx -> Err Formula
 cqelim' vars (eqs, neqs) sgns =
   case List.find (P.isConstant vars) eqs of
-    Just c -> (do 
+    Just c -> (do
       sgns' <- assertSign sgns (c, Zero)
       let eqs' = eqs \\ [c]
       f <- cqelim' vars (eqs', neqs) sgns'
       return $ Equal.mkEq c P.zero ∧ f) `catchError` handle
     Nothing -> do
-      neqs' <- mapM (polyNonzero vars sgns) neqs 
+      neqs' <- mapM (polyNonzero vars sgns) neqs
       if null eqs then return $ F.listConj neqs' else
        let n = minimum $ map (P.degree vars) eqs
            p = Maybe.fromJust $ List.find (\p' -> P.degree vars p' == n) eqs
            oeqs = eqs \\ [p]
-       in do 
-         splitZero sgns (P.phead vars p) 
+       in do
+         splitZero sgns (P.phead vars p)
            (cqelim' vars (P.behead vars p : oeqs, neqs))
-           $ \sgns' -> 
+           $ \sgns' ->
               let cfn s = snd $ P.pdivide vars s p in
               if not $ null oeqs then cqelim' vars (p : map cfn oeqs, neqs) sgns'
               else if null neqs then return (⊤) else
@@ -155,16 +155,16 @@ basicQelim :: Vars -> Formula -> Formula
 basicQelim vars (Ex x p) =
   let (eqs, neqs) = List.partition (not . F.negative) (F.conjuncts p) in
   cqelim (x : vars) (map Equal.lhs eqs, map (Equal.lhs . F.opp) neqs) initSgns
-basicQelim _ _ = __IMPOSSIBLE__ 
+basicQelim _ _ = __IMPOSSIBLE__
 
 qelim :: Formula -> Formula
-qelim = 
-  Skolem.simplify . Cooper.evalc . 
+qelim =
+  Skolem.simplify . Cooper.evalc .
     Qelim.lift P.atom (Prop.dnf . Qelim.cnnf id . Cooper.evalc) basicQelim
 
 -- * Tests
 
-{- 
+{-
 let polytest tm = System.IO.UTF8.putStrLn $ PP.prettyShow $ P.polynate (ATP.Fol.fv tm) tm
 
 :{
@@ -358,4 +358,4 @@ let schur = polytest
           (x1 - x2 - x3 + x4)^10 +
           (x1 - x2 - x3 - x4)^10)) |]
 :}
--} 
+-}

@@ -1,5 +1,5 @@
 
--- Union-Find 
+-- Union-Find
 
 module ATP.Util.UnionFind
   ( Partition
@@ -8,10 +8,10 @@ module ATP.Util.UnionFind
   , unequal
   , equate
   , equated
-  ) 
+  )
 where
 
-import Prelude 
+import Prelude
 import qualified Data.Map as Map
 import Data.Map(Map)
 import qualified ATP.Util.Print as PP
@@ -25,14 +25,14 @@ data Partition a = Partition (Map a (Pnode a))
   deriving Eq
 
 terminus :: Ord a => Partition a -> a -> Maybe (a, Int)
-terminus (ptn @ (Partition m)) a = 
+terminus (ptn @ (Partition m)) a =
   case Map.lookup a m of
     Nothing -> Nothing
     Just (Nonterminal b) -> terminus ptn b
     Just (Terminal p q) -> Just (p, q)
 
 tryterminus :: Ord a => Partition a -> a -> (a, Int)
-tryterminus ptn a = 
+tryterminus ptn a =
     case terminus ptn a of
       Just p -> p
       Nothing -> (a, 1)
@@ -46,8 +46,8 @@ equivalent eqv a b = canonize eqv a == canonize eqv b
 equate :: Ord a => (a, a) -> Partition a -> Partition a
 equate (a, b) (ptn @ (Partition f)) =
   let (a', na) = tryterminus ptn a
-      (b', nb) = tryterminus ptn b 
-      m = if a' == b' then f 
+      (b', nb) = tryterminus ptn b
+      m = if a' == b' then f
           else if na <= nb then
                Map.insert a' (Nonterminal b') (Map.insert b' (Terminal b' (na + nb)) f)
                else

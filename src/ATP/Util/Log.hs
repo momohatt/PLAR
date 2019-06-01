@@ -15,12 +15,12 @@ where
 import Prelude hiding (log)
 import qualified Directory
 import ATP.Util.Log.Class
-import qualified IO 
+import qualified IO
 import qualified System.Log.Handler.Simple as S
 import qualified System.Log.Logger as Log
 import qualified System.IO.UTF8 as S
 
-type Handler = S.GenericHandler IO.Handle 
+type Handler = S.GenericHandler IO.Handle
 
 -- Parse a priority.
 
@@ -51,7 +51,7 @@ defaultPrio = WARNING
 logFileName :: String
 logFileName = "imogen.log"
 
-{- 
+{-
 | Initialize the log file
 
 initialize prio file term
@@ -64,22 +64,22 @@ a file.  Its priority is set at DEBUG.  Thus, it will get all messages
 that can get by the logger.  The terminal handler logs to stdout, and
 has priority given by an input parameter that defaults to WARNING.
 Thus, no debug messages will ever go to the terminal unless they can
-get through the logger.  
--} 
+get through the logger.
+-}
 
 initialize :: Priority -> Bool -> Bool -> IO ()
-initialize prio file term = 
+initialize prio file term =
   let update = Log.updateGlobalLogger Log.rootLoggerName in
   do -- Erase the default stderr handler.
      update $ Log.setHandlers ([] :: [Handler])
-     -- Create the terminal handler.  
+     -- Create the terminal handler.
      let termprio = if term then prio else defaultPrio
      tout <- S.streamHandler IO.stdout termprio
      update $ Log.addHandler tout
      -- Set the logger priority
      update $ Log.setLevel prio
      -- If we want file output, open a handler to the log file
-     if file 
+     if file
        then do
          -- Remove existing log file
          logExists <- Directory.doesFileExist logFileName
@@ -90,10 +90,10 @@ initialize prio file term =
          update $ Log.addHandler handler
        else return ()
 
-{- 
+{-
 Update the logging priority for a given logger.  Note that we
 set both the global and the file log prioriteies.
--} 
+-}
 
 setLevel :: String -> Priority -> IO ()
 setLevel log = Log.updateGlobalLogger log . Log.setLevel

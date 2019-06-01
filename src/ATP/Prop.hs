@@ -1,5 +1,5 @@
 
-module ATP.Prop 
+module ATP.Prop
   ( eval
   , atoms
   , apply
@@ -26,12 +26,12 @@ module ATP.Prop
     -- * Testing
   , forms
   , tests
-  ) 
+  )
 where
 
 import ATP.Util.Prelude
 import qualified ATP.Formula as F
-import ATP.FormulaSyn 
+import ATP.FormulaSyn
 import qualified ATP.Util.List as List
 import qualified ATP.Util.ListSet as Set
 import ATP.Util.ListSet ((∪))
@@ -46,7 +46,7 @@ class Apply a where
   apply :: Map Rel Formula -> a -> a
 
 instance Apply Formula where
-  apply env = F.onatoms (\p -> case Map.lookup p env of 
+  apply env = F.onatoms (\p -> case Map.lookup p env of
                                  Just p' -> p'
                                  Nothing -> Atom p)
 
@@ -63,9 +63,9 @@ eval fm v = case fm of
   _ -> error "quantifier in prop eval"
 
 atoms :: Formula -> [Rel]
-atoms = List.sort . F.atomUnion (\x -> [x]) 
+atoms = List.sort . F.atomUnion (\x -> [x])
 
-onallvaluations :: Eq a => ((a -> Bool) -> b) -> (b -> b -> b) 
+onallvaluations :: Eq a => ((a -> Bool) -> b) -> (b -> b -> b)
                      -> (a -> Bool) -> [a] -> b
 onallvaluations subfn comb v pvs = case pvs of
   [] -> subfn v
@@ -78,23 +78,23 @@ truthtable :: Formula -> String
 truthtable fm = PP.render (truthtableDoc fm)
  where
   truthtableDoc fm' =
-    let pvs = atoms fm' 
-        width = foldr (max . length . show) 5 pvs + 1 
-        fixw s = s ++ replicate (width - length s) ' ' 
-        truthstring p = fixw (if p then "⊤" else "⊥") 
-        separator = replicate (width * length pvs + 9) '-' 
+    let pvs = atoms fm'
+        width = foldr (max . length . show) 5 pvs + 1
+        fixw s = s ++ replicate (width - length s) ' '
+        truthstring p = fixw (if p then "⊤" else "⊥")
+        separator = replicate (width * length pvs + 9) '-'
         row v =
-            let lis = map (truthstring . v) pvs 
+            let lis = map (truthstring . v) pvs
                 ans = truthstring(eval fm' v) in
                 [lis ++ [ans]]
         rows = onallvaluations row (++) (const False) pvs
         rowStr r = let (lis, ans) = splitAt (length r - 1) r in
                        (foldr (++) ("| " ++ head ans) lis)
-    in PP.vcat [ PP.text (foldr (\s t -> fixw(show s) ++ t) "| formula" pvs) 
-               , PP.empty 
+    in PP.vcat [ PP.text (foldr (\s t -> fixw(show s) ++ t) "| formula" pvs)
+               , PP.empty
                , PP.text separator
-               , PP.empty 
-               , PP.vcat (map (PP.text . rowStr) rows) 
+               , PP.empty
+               , PP.vcat (map (PP.text . rowStr) rows)
                , PP.text separator
                ]
 
@@ -102,12 +102,12 @@ tautology :: Formula -> Bool
 tautology fm = onallvaluations (eval fm) (&&) (const False) (atoms fm)
 
 unsatisfiable :: Formula -> Bool
-unsatisfiable = tautology . Not 
+unsatisfiable = tautology . Not
 
 satisfiable :: Formula -> Bool
-satisfiable = not . unsatisfiable 
+satisfiable = not . unsatisfiable
 
-dual :: Formula -> Formula 
+dual :: Formula -> Formula
 dual fm = case fm of
   [$form| ⊥ |] -> (⊤)
   [$form| ⊤ |] -> (⊥)
@@ -128,13 +128,13 @@ simplify fm = case fm of
   [$form| $p ∧ $q |] -> simplify1 $ p' ∧ q'
     where p' = simplify p
           q' = simplify q
-  [$form| $p ∨ $q |] -> simplify1 $ p' ∨ q' 
+  [$form| $p ∨ $q |] -> simplify1 $ p' ∨ q'
     where p' = simplify p
           q' = simplify q
   [$form| $p ⊃ $q |] -> simplify1 $ p' ⊃ q'
     where p' = simplify p
           q' = simplify q
-  [$form| $p ⇔ $q |] -> simplify1 $ p' ⇔ q' 
+  [$form| $p ⇔ $q |] -> simplify1 $ p' ⇔ q'
     where p' = simplify p
           q' = simplify q
   _ -> fm
@@ -167,12 +167,12 @@ nnf :: Formula -> Formula
 nnf = nnf' . simplify
 
 nnf' :: Formula -> Formula
-nnf' fm = case fm of 
+nnf' fm = case fm of
   [$form| $p ∧ $q |] -> p' ∧ q'
-    where p' = nnf' p 
+    where p' = nnf' p
           q' = nnf' q
   [$form| $p ∨ $q |] -> p' ∨ q'
-    where p' = nnf' p 
+    where p' = nnf' p
           q' = nnf' q
   [$form| $p ⊃ $q |] -> np' ∨ q'
     where np' = nnf' $ (¬) p
@@ -185,14 +185,14 @@ nnf' fm = case fm of
   [$form| ¬ ¬ $p |] -> nnf' p
   [$form| ¬ ($p ∧ $q) |] -> p' ∨ q'
     where p' = nnf' $ (¬) p
-          q' = nnf' $ (¬) q 
+          q' = nnf' $ (¬) q
   [$form| ¬ ($p ∨ $q) |] -> p' ∧ q'
     where p' = nnf' $ (¬) p
           q' = nnf' $ (¬) q
   [$form| ¬ ($p ⊃ $q) |] -> p' ∧ q'
     where p' = nnf' p
           q' = nnf' $ (¬) q
-  [$form| ¬ ($p ⇔ $q) |] -> p' ∧ q'' ∨ p'' ∧ q' 
+  [$form| ¬ ($p ⇔ $q) |] -> p' ∧ q'' ∨ p'' ∧ q'
     where p' = nnf' p
           q' = nnf' q
           p'' = nnf' $ (¬) p
@@ -200,33 +200,33 @@ nnf' fm = case fm of
   _ -> fm
 
 nenf :: Formula -> Formula
-nenf = nenf' . simplify 
+nenf = nenf' . simplify
 
 nenf' :: Formula -> Formula
-nenf' fm = case fm of 
+nenf' fm = case fm of
   [$form| ¬¬$p |] -> nenf' p
-  [$form| ¬($p ∧ $q) |] -> [$form| $p' ∨ $q' |] 
+  [$form| ¬($p ∧ $q) |] -> [$form| $p' ∨ $q' |]
     where p' = nenf' [$form| ¬ $p |]
           q' = nenf' [$form| ¬ $q |]
-  [$form| ¬($p ∨ $q) |] -> [$form| $p' ∧ $q' |] 
+  [$form| ¬($p ∨ $q) |] -> [$form| $p' ∧ $q' |]
     where p' = nenf' [$form| ¬ $p |]
           q' = nenf' [$form| ¬ $q |]
-  [$form| ¬($p ⊃ $q) |] -> [$form| $p' ∧ $q' |] 
+  [$form| ¬($p ⊃ $q) |] -> [$form| $p' ∧ $q' |]
     where p' = nenf' p
           q' = nenf' [$form| ¬ $q |]
-  [$form| ¬($p ⇔ $q) |] -> [$form| $p' ⇔ $q' |] 
+  [$form| ¬($p ⇔ $q) |] -> [$form| $p' ⇔ $q' |]
     where p' = nenf' p
           q' = nenf' [$form| ¬ $q |]
-  [$form| $p ∧ $q |] -> [$form| $p' ∧ $q' |] 
+  [$form| $p ∧ $q |] -> [$form| $p' ∧ $q' |]
     where p' = nenf' p
           q' = nenf' q
-  [$form| $p ∨ $q |] -> [$form| $p' ∨ $q' |] 
+  [$form| $p ∨ $q |] -> [$form| $p' ∨ $q' |]
     where p' = nenf' p
           q' = nenf' q
-  [$form| $p ⊃ $q |] -> [$form| $p' ∨ $q' |] 
+  [$form| $p ⊃ $q |] -> [$form| $p' ∨ $q' |]
     where p' = nenf' [$form| ¬ $p |]
           q' = nenf' q
-  [$form| $p ⇔ $q |] -> [$form| $p' ⇔ $q' |] 
+  [$form| $p ⇔ $q |] -> [$form| $p' ⇔ $q' |]
     where p' = nenf' p
           q' = nenf' q
   _ -> fm
@@ -235,31 +235,31 @@ occurrences :: Rel -> Formula -> (Bool, Bool)
 occurrences x fm = case fm of
   [$form| ^y |] -> (x == y, False)
   [$form| ¬ $p |] -> (neg, pos)
-    where (pos, neg) = occurrences x p 
+    where (pos, neg) = occurrences x p
   [$form| $p ∧ $q |] -> (pos1 || pos2, neg1 || neg2)
     where (pos1, neg1) = occurrences x p
-          (pos2, neg2) = occurrences x q 
+          (pos2, neg2) = occurrences x q
   [$form| $p ∨ $q |] -> (pos1 || pos2, neg1 || neg2)
     where (pos1, neg1) = occurrences x p
-          (pos2, neg2) = occurrences x q 
+          (pos2, neg2) = occurrences x q
   [$form| $p ⊃ $q |] -> (neg1 || pos2, pos1 || neg2)
     where (pos1, neg1) = occurrences x p
-          (pos2, neg2) = occurrences x q 
-  [$form| $p ⇔ $q |] -> if pos1 || pos2 || neg1 || neg2 
+          (pos2, neg2) = occurrences x q
+  [$form| $p ⇔ $q |] -> if pos1 || pos2 || neg1 || neg2
                           then (True, True) else (False, False)
     where (pos1, neg1) = occurrences x p
-          (pos2, neg2) = occurrences x q 
+          (pos2, neg2) = occurrences x q
   _ -> (False, False)
 
 distrib :: [[Formula]] -> [[Formula]] -> [[Formula]]
-distrib = List.allPairs Set.union 
+distrib = List.allPairs Set.union
 
 subsume :: [[Formula]] -> [[Formula]]
 subsume cls =
   filter (\cl -> not(any (\cl' -> Set.psubset cl' cl) cls)) cls
 
-dnf :: Formula -> Formula 
-dnf f = --trace' "dnf: in" (pPrint f) $ 
+dnf :: Formula -> Formula
+dnf f = --trace' "dnf: in" (pPrint f) $
   let f' = (F.listDisj . map F.listConj . simpdnf) f in
   --trace' "dnf: out" (pPrint f') $ f'
   f'
@@ -281,26 +281,26 @@ trivial lits =
     Set.intersect pos (map F.opp neg) /= []
 
 cnf :: Formula -> Formula
-cnf = F.listConj . map F.listDisj . simpcnf 
+cnf = F.listConj . map F.listDisj . simpcnf
 
 simpcnf :: Formula -> [[Formula]]
 simpcnf Bot = [[]]
 simpcnf Top = []
-simpcnf fm = 
+simpcnf fm =
   let cjs = filter (not . trivial) (purecnf $ nnf fm) in
-  filter (\c -> not $ any (\c' -> Set.psubset c' c) cjs) cjs             
+  filter (\c -> not $ any (\c' -> Set.psubset c' c) cjs) cjs
 
 purecnf :: Formula -> [[Formula]]
 purecnf = map (map F.opp) . (purednf . nnf . Not)
 
-{- 
+{-
 nnf [$form| p ⇔ (q ⇔ r) |]
 cnf [$form| p ⇔ (q ⇔ r) |]
 dnf [$form| p ⇔ (q ⇔ r) |]
--} 
+-}
 
 -- -----------------------------------------------------------------------------
---  Tests                                                                       
+--  Tests
 -- -----------------------------------------------------------------------------
 
 props :: Int -> Gen Rel
@@ -308,15 +308,15 @@ props n = fmap (\i -> R ("p" ++ show i) []) $ Q.choose (0, n)
 
 forms :: Int -> Gen Formula
 forms 0 = Q.oneof [ fmap Atom (props 10), return Top, return Bot ]
-forms n 
+forms n
  | n > 0 = Q.oneof [ forms (n-1)
                    , M.liftM Not fms
-                   , M.liftM2 And fms fms 
-                   , M.liftM2 Or fms fms 
-                   , M.liftM2 Imp fms fms 
-                   , M.liftM2 Iff fms fms 
+                   , M.liftM2 And fms fms
+                   , M.liftM2 Or fms fms
+                   , M.liftM2 Imp fms fms
+                   , M.liftM2 Iff fms fms
                    ]
- | otherwise = error "Impossible" 
+ | otherwise = error "Impossible"
  where fms = forms $ n - 1
 
 prop_nnf_correct :: Property
@@ -332,7 +332,7 @@ prop_dnf_correct = Q.label "dnf_correct" $
   Q.forAll (forms 5) $ \f -> tautology (f ⇔ dnf f)
 
 tests :: IO ()
-tests = do 
+tests = do
   Q.quickCheck prop_nnf_correct
   Q.quickCheck prop_cnf_correct
   Q.quickCheck prop_dnf_correct

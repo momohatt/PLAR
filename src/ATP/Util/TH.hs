@@ -1,7 +1,7 @@
 
 -- Template Haskell utils.
 
-module ATP.Util.TH 
+module ATP.Util.TH
   ( conE
   , conP
   , varE

@@ -1,5 +1,5 @@
 
-module ATP.Order 
+module ATP.Order
   ( earlier
   , lexord
   , termSize
@@ -9,7 +9,7 @@ module ATP.Order
   )
 where
 
-import Prelude 
+import Prelude
 import qualified ATP.Fol as Fol
 import ATP.FormulaSyn
 
@@ -19,16 +19,16 @@ termSize (Num _) = 1
 termSize (Fn _ ts) = 1 + sum (map termSize ts)
 
 lexord :: Eq a => (a -> a -> Bool) -> [a] -> [a] -> Bool
-lexord ord (h1:t1) (h2:t2) = if ord h1 h2 
+lexord ord (h1:t1) (h2:t2) = if ord h1 h2
                              then length t1 == length t2
                              else h1 == h2 && lexord ord t1 t2
 lexord _ _ _ = False
 
 lpoGt :: ((String, Int) -> (String, Int) -> Bool) -> Term -> Term -> Bool
-lpoGt w s t = 
-  case (s, t) of 
+lpoGt w s t =
+  case (s, t) of
     (_, Var x) -> not(s == t) && elem x (Fol.fv s)
-    (Fn f fargs, Fn g gargs) -> 
+    (Fn f fargs, Fn g gargs) ->
       any (\si -> lpoGe w si t) fargs ||
       all (lpoGt w s) gargs &&
       (f == g && lexord (lpoGt w) fargs gargs ||

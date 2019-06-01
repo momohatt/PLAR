@@ -1,5 +1,5 @@
 
-{- 
+{-
 First order logic.  Atomic formulas are now relations on
 terms where terms are either functions applied to arguments
 or variables.
@@ -15,12 +15,12 @@ Term lists TS ::= T | T , TS
 
 Atoms A ::= ( T ) | - A | Var () | Var ( TS ) | Var
 
-Relations R ::= Var() | Var ( TS ) | Var | T = T | T < T 
+Relations R ::= Var() | Var ( TS ) | Var | T = T | T < T
               | T <= T | T > T | T >= T
 
--} 
+-}
 
-module ATP.Fol 
+module ATP.Fol
   ( onformula
   , isVar
   , Fv(fv)
@@ -31,10 +31,10 @@ module ATP.Fol
   , predicates
   , variant
   , holds
-  ) 
+  )
 where
 
-import ATP.Util.Prelude 
+import ATP.Util.Prelude
 import qualified ATP.Formula as F
 import ATP.FormulaSyn
 import ATP.Util.Lib((↦))
@@ -46,18 +46,18 @@ import Data.Map(Map)
 
 -- * Util
 
--- Terms 
+-- Terms
 
 isVar :: Term -> Bool
 isVar (Var _) = True
 isVar _ = False
 
 -- Relations
-  
+
 onformula :: (Term -> Term) -> Formula -> Formula
 onformula f = F.onatoms(\(R p a) -> Atom(R p (map f a)))
 
--- * Free variables 
+-- * Free variables
 
 class Fv a where
   fv :: a -> Vars
@@ -105,7 +105,7 @@ instance Nums Formula where
           [$form| ⊤ |] -> []
           [$form| ⊥ |] -> []
           [$form| ¬ $p |] -> nums p
-          [$form| ∀ $_. $p |] -> nums p 
+          [$form| ∀ $_. $p |] -> nums p
           [$form| exists $_. $p |] -> nums p
           [$form| $p ∧ $q  |] -> combine p q
           [$form| $p ∨ $q |] -> combine p q
@@ -118,27 +118,27 @@ instance Nums a => Nums [a] where
   nums xs = Set.unions (map nums xs)
 
 generalize :: Formula -> Formula
-generalize fm = foldr All fm (fv fm) 
+generalize fm = foldr All fm (fv fm)
 
 -- Function symbols with arity
 
 functions :: Formula -> [(Func, Int)]
-functions = F.atomUnion (\(R _ args) -> foldr (Set.union . funcs) [] args) 
+functions = F.atomUnion (\(R _ args) -> foldr (Set.union . funcs) [] args)
 
 funcs :: Term -> [(Func, Int)]
 funcs (Var _) = []
 funcs (Num _) = []
-funcs (Fn f args) = foldr (Set.union . funcs) [(f, length args)] args 
+funcs (Fn f args) = foldr (Set.union . funcs) [(f, length args)] args
 
 predicates :: Formula -> [(Func, Int)]
 predicates = F.atomUnion (\(R p args) -> [(p, length args)])
 
 -- Environments
 
-{- 
+{-
 This is generally the correct type for substitutions.  There is one exception
 in EqElim where Map Term Term is needed
--} 
+-}
 
 -- Substitutions
 
@@ -157,54 +157,54 @@ instance Subst Rel where
   apply env (R p args) = R p (map (apply env) args)
 
 instance Subst Formula where
-  apply env fm = case fm of 
-    [$form| ^a |] -> [$form| ^a' |] 
+  apply env fm = case fm of
+    [$form| ^a |] -> [$form| ^a' |]
       where a' = apply env a
     [$form| ¬ $p |] -> [$form| ¬ $p' |]
       where p' = apply env p
     [$form| $p ∧ $q |] -> [$form| $p' ∧ $q' |]
-      where p' = apply env p 
+      where p' = apply env p
             q' = apply env q
     [$form| $p ∨ $q |] -> [$form| $p' ∨ $q' |]
-      where p' = apply env p 
+      where p' = apply env p
             q' = apply env q
     [$form| $p ⊃ $q |] -> [$form| $p' ⊃ $q' |]
-      where p' = apply env p 
+      where p' = apply env p
             q' = apply env q
     [$form| $p ⇔ $q |] -> [$form| $p' ⇔ $q' |]
-      where p' = apply env p 
+      where p' = apply env p
             q' = apply env q
     [$form| forall $x. $p |] -> applyq env All x p
     [$form| exists $x. $p |] -> applyq env Ex x p
     [$form| true |] -> [$form| true |]
     [$form| false |] -> [$form| false |]
 
-{- 
+{-
 Substitute under a binder
 The following functions need the type variable, as they are used at multiple types
--} 
+-}
 
 variant :: Var -> Vars -> Var
 variant x vars = if List.elem x vars then variant (x ++ "'") vars else x
 
 applyq :: Env -> (Var -> Formula -> Formula) -> Var -> Formula -> Formula
 applyq env quant x p = quant x' (apply ((x ↦ Var x') env) p)
- where 
+ where
   x' = if List.any (\k -> case Map.lookup k env of
                            Just v -> List.elem x (fv v)
-                           Nothing -> False) (fv p \\ [x]) 
+                           Nothing -> False) (fv p \\ [x])
        then variant x (fv(apply (Map.delete x env) p)) else x
 
 termval :: ([a], Func -> [b] -> b, Pred -> [b] -> Bool) -> Map Var b -> Term -> b
-termval m@(_, func, _) v tm = case tm of 
+termval m@(_, func, _) v tm = case tm of
   Var x -> case Map.lookup x v of
-    Nothing -> error "not in domain" 
+    Nothing -> error "not in domain"
     Just y -> y
   Fn f args -> func f $ map (termval m v) args
-  Num _ -> error "Unimplemented" 
+  Num _ -> error "Unimplemented"
 
 holds :: ([a], Func -> [a] -> a, Pred -> [a] -> Bool) -> Map Var a -> Formula -> Bool
-holds m@(domain, _, f) v fm = case fm of 
+holds m@(domain, _, f) v fm = case fm of
   [$form| ⊥ |] -> False
   [$form| ⊤ |] -> True
   Atom (R r args) -> f r (map (termval m v) args)

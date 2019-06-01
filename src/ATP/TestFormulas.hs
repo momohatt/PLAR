@@ -9,17 +9,17 @@ import ATP.FormulaSyn
 import qualified Data.List as List
 
 -- -----------------------------------------------------------------------------
---  Terms                                                                       
+--  Terms
 -- -----------------------------------------------------------------------------
 
 lookupTerm :: String -> Maybe Term
 lookupTerm = flip List.lookup terms
 
 terms :: [(String, Term)]
-terms = 
-  [ 
-   
-    ("lagrange_4", 
+terms =
+  [
+
+    ("lagrange_4",
      [$term| (((x1^2) + (x2^2) + (x3^2) + (x4^2)) *
            ((y1^2) + (y2^2) + (y3^2) + (y4^2))) -
       ((((((x1*y1) - (x2*y2)) - (x3*y3)) - (x4*y4))^2)  +
@@ -46,7 +46,7 @@ terms =
        ((x1 - x2)^4 + (x1 - x3)^4 + (x1 - x4)^4 +
         (x2 - x3)^4 + (x2 - x4)^4 + (x3 - x4)^4)) |])
 
-  , ("fleck", 
+  , ("fleck",
      [$term| 60 * (x1^2 + x2^2 + x3^2 + x4^2)^3 -
       (((x1 + x2 + x3)^6 + (x1 + x2 - x3)^6 +
         (x1 - x2 + x3)^6 + (x1 - x2 - x3)^6 +
@@ -131,7 +131,7 @@ terms =
              (x3 + x4)^8 + (x3 - x4)^8) +
        6 * ((2 * x1)^8 + (2 * x2)^8 + (2 * x3)^8 + (2 * x4)^8)) |])
 
-  , ("schur", 
+  , ("schur",
      [$term| 22680 * (x1^2 + x2^2 + x3^2 + x4^2)^5 -
       (9 * ((2 * x1)^10 +
             (2 * x2)^10 +
@@ -200,7 +200,7 @@ terms =
             (x1 - x2 - x3 + x4)^10 +
             (x1 - x2 - x3 - x4)^10)) |] )
 
-   , ("Rajwade", 
+   , ("Rajwade",
     [$term| (x_1^2 + x_2^2 + x_3^2 + x_4^2 + x_5^2 + x_6^2 + x_7^2 + x_8^2 + x_9^2) *
    (y_1^2 + y_2^2 + y_3^2 + y_4^2 + y_5^2 + y_6^2 + y_7^2 + y_8^2 +
     y_9^2 + y_10^2 + y_11^2 + y_12^2 + y_13^2 + y_14^2 + y_15^2 + y_16^2) -
@@ -224,7 +224,7 @@ terms =
   ]
 
 -- -----------------------------------------------------------------------------
---  Formulas                                                                    
+--  Formulas
 -- -----------------------------------------------------------------------------
 
 
@@ -232,8 +232,8 @@ lookup :: String -> Maybe Formula
 lookup = flip List.lookup formulas
 
 formulas :: [(String, Formula)]
-formulas = 
-  [ 
+formulas =
+  [
 
 -- ** Pellatier's problems
 
@@ -263,383 +263,383 @@ formulas =
 
   , ("p19", [$form| ∃ x. ∀ y z. (P(y) ⊃ Q(z)) ⊃ P(x) ⊃ Q(x) |])
 
-  , ("p20", [$form| (∀ x y. ∃ z. ∀ w. P(x) ∧ Q(y) ⊃ R(z) ∧ U(w)) 
+  , ("p20", [$form| (∀ x y. ∃ z. ∀ w. P(x) ∧ Q(y) ⊃ R(z) ∧ U(w))
                       ⊃ (∃ x y. P(x) ∧ Q(y)) ⊃ (∃ z. R(z)) |])
 
-  , ("p21", [$form| (∃ x. P ⊃ Q(x)) ∧ (∃ x. Q(x) ⊃ P) 
+  , ("p21", [$form| (∃ x. P ⊃ Q(x)) ∧ (∃ x. Q(x) ⊃ P)
                       ⊃ (∃ x. P ⇔ Q(x)) |])
 
   , ("p22", [$form| (∀ x. P ⇔ Q(x)) ⊃ (P ⇔ (∀ x. Q(x))) |])
 
   , ("p23", [$form| (∀ x. P ∨ Q(x)) ⇔ P ∨ (∀ x. Q(x)) |])
 
-  , ("p24", [$form|  ¬ (∃ x. U(x) ∧ Q(x)) ∧ 
-                   (∀ x. P(x) ⊃ Q(x) ∨ R(x)) ∧       
-                 ¬ (∃ x. P(x) ⊃ (∃ x. Q(x))) ∧   
-                   (∀ x. Q(x) ∧ R(x) ⊃ U(x))         
-                 ⊃ (∃ x. P(x) ∧ R(x)) |]) 
+  , ("p24", [$form|  ¬ (∃ x. U(x) ∧ Q(x)) ∧
+                   (∀ x. P(x) ⊃ Q(x) ∨ R(x)) ∧
+                 ¬ (∃ x. P(x) ⊃ (∃ x. Q(x))) ∧
+                   (∀ x. Q(x) ∧ R(x) ⊃ U(x))
+                 ⊃ (∃ x. P(x) ∧ R(x)) |])
 
-  , ("p25", [$form| (∃ x. P(x)) ∧ 
-                 (∀ x. U(x) ⊃ ¬ G(x) ∧ R(x)) ∧ 
-                 (∀ x. P(x) ⊃ G(x) ∧ U(x)) ∧ 
-                 ((∀ x. P(x) ⊃ Q(x)) ∨ (∃ x. Q(x) ∧ P(x))) 
-                 ⊃ (∃ x. Q(x) ∧ P(x)) |]) 
+  , ("p25", [$form| (∃ x. P(x)) ∧
+                 (∀ x. U(x) ⊃ ¬ G(x) ∧ R(x)) ∧
+                 (∀ x. P(x) ⊃ G(x) ∧ U(x)) ∧
+                 ((∀ x. P(x) ⊃ Q(x)) ∨ (∃ x. Q(x) ∧ P(x)))
+                 ⊃ (∃ x. Q(x) ∧ P(x)) |])
 
-  , ("p26", [$form| ((∃ x. P(x)) ⇔ (∃ x. Q(x))) ∧ 
-                  (∀ x y. P(x) ∧ Q(y) ⊃ (R(x) ⇔ U(y))) 
+  , ("p26", [$form| ((∃ x. P(x)) ⇔ (∃ x. Q(x))) ∧
+                  (∀ x y. P(x) ∧ Q(y) ⊃ (R(x) ⇔ U(y)))
                   ⊃ ((∀ x. P(x) ⊃ R(x)) ⇔ (∀ x. Q(x) ⊃ U(x))) |])
 
-  , ("p27", [$form| (∃ x. P(x) ∧ ¬ Q(x)) ∧ 
-                  (∀ x. P(x) ⊃ R(x)) ∧ 
-                  (∀ x. U(x) ∧ V(x) ⊃ P(x)) ∧ 
-                  (∃ x. R(x) ∧ ¬ Q(x)) 
-                  ⊃ (∀ x. U(x) ⊃ ¬ R(x)) 
+  , ("p27", [$form| (∃ x. P(x) ∧ ¬ Q(x)) ∧
+                  (∀ x. P(x) ⊃ R(x)) ∧
+                  (∀ x. U(x) ∧ V(x) ⊃ P(x)) ∧
+                  (∃ x. R(x) ∧ ¬ Q(x))
+                  ⊃ (∀ x. U(x) ⊃ ¬ R(x))
                   ⊃ (∀ x. U(x) ⊃ ¬ V(x)) |])
 
-  , ("p28", [$form| (∀ x. P(x) ⊃ (∀ x. Q(x))) ∧ 
-                  ((∀ x. Q(x) ∨ R(x)) ⊃ (∃ x. Q(x) ∧ R(x))) ∧ 
-                  ((∃ x. R(x)) ⊃ (∀ x. L(x) ⊃ M(x))) ⊃ 
+  , ("p28", [$form| (∀ x. P(x) ⊃ (∀ x. Q(x))) ∧
+                  ((∀ x. Q(x) ∨ R(x)) ⊃ (∃ x. Q(x) ∧ R(x))) ∧
+                  ((∃ x. R(x)) ⊃ (∀ x. L(x) ⊃ M(x))) ⊃
                   (∀ x. P(x) ∧ L(x) ⊃ M(x)) |])
 
-  , ("p29", [$form| (∃ x. P(x)) ∧ (∃ x. G(x)) ⊃ 
-                  ((∀ x. P(x) ⊃ H(x)) ∧ (∀ x. G(x) ⊃ J(x)) ⇔ 
+  , ("p29", [$form| (∃ x. P(x)) ∧ (∃ x. G(x)) ⊃
+                  ((∀ x. P(x) ⊃ H(x)) ∧ (∀ x. G(x) ⊃ J(x)) ⇔
                   (∀ x y. P(x) ∧ G(y) ⊃ H(x) ∧ J(y))) |])
 
-  , ("p30", [$form| (∀ x. P(x) ∨ G(x) ⊃ ¬ H(x)) ∧ 
-                  (∀ x. (G(x) ⊃ ¬ U(x)) ⊃ P(x) ∧ H(x)) 
+  , ("p30", [$form| (∀ x. P(x) ∨ G(x) ⊃ ¬ H(x)) ∧
+                  (∀ x. (G(x) ⊃ ¬ U(x)) ⊃ P(x) ∧ H(x))
                   ⊃ (∀ x. U(x)) |])
 
-  , ("p31", [$form| ¬ (∃ x. P(x) ∧ (G(x) ∨ H(x))) ∧ 
-                  (∃ x. Q(x) ∧ P(x)) ∧ 
-                  (∀ x. ¬ H(x) ⊃ J(x)) 
+  , ("p31", [$form| ¬ (∃ x. P(x) ∧ (G(x) ∨ H(x))) ∧
+                  (∃ x. Q(x) ∧ P(x)) ∧
+                  (∀ x. ¬ H(x) ⊃ J(x))
                   ⊃ (∃ x. Q(x) ∧ J(x)) |])
 
-  , ("p32", [$form| (∀ x. P(x) ∧ (G(x) ∨ H(x)) ⊃ Q(x)) ∧ 
-                  (∀ x. Q(x) ∧ H(x) ⊃ J(x)) ∧ 
-                  (∀ x. R(x) ⊃ H(x)) 
+  , ("p32", [$form| (∀ x. P(x) ∧ (G(x) ∨ H(x)) ⊃ Q(x)) ∧
+                  (∀ x. Q(x) ∧ H(x) ⊃ J(x)) ∧
+                  (∀ x. R(x) ⊃ H(x))
                   ⊃ (∀ x. P(x) ∧ R(x) ⊃ J(x)) |])
 
-  , ("p33", [$form| (∀ x. P(a) ∧ (P(x) ⊃ P(b)) ⊃ P(c)) ⇔ 
+  , ("p33", [$form| (∀ x. P(a) ∧ (P(x) ⊃ P(b)) ⊃ P(c)) ⇔
                   (∀ x. P(a) ⊃ P(x) ∨ P(c)) ∧ (P(a) ⊃ P(b) ⊃ P(c)) |])
 
-  , ("p34", [$form| ((∃ x. ∀ y. P(x) ⇔ P(y)) ⇔ 
-                     ((∃ x. Q(x)) ⇔ (∀ y. Q(y)))) ⇔ 
-                  ((∃ x. ∀ y. Q(x) ⇔ Q(y)) ⇔ 
+  , ("p34", [$form| ((∃ x. ∀ y. P(x) ⇔ P(y)) ⇔
+                     ((∃ x. Q(x)) ⇔ (∀ y. Q(y)))) ⇔
+                  ((∃ x. ∀ y. Q(x) ⇔ Q(y)) ⇔
                   ((∃ x. P(x)) ⇔ (∀ y. P(y)))) |])
 
   , ("p35", [$form| ∃ x y. P(x,y) ⊃ (∀ x y. P(x,y)) |])
 
-  , ("p36", [$form| (∀ x. ∃ y. P(x,y)) ∧ 
-                  (∀ x. ∃ y. G(x,y)) ∧ 
-                  (∀ x y. P(x,y) ∨ G(x,y) 
-                  ⊃ (∀ z. P(y,z) ∨ G(y,z) ⊃ H(x,z))) 
+  , ("p36", [$form| (∀ x. ∃ y. P(x,y)) ∧
+                  (∀ x. ∃ y. G(x,y)) ∧
+                  (∀ x y. P(x,y) ∨ G(x,y)
+                  ⊃ (∀ z. P(y,z) ∨ G(y,z) ⊃ H(x,z)))
                   ⊃ (∀ x. ∃ y. H(x,y)) |])
 
-  , ("p37", [$form| (∀ z. 
-                  ∃ w. ∀ x. ∃ y. (P(x,z) ⊃ P(y,w)) ∧ P(y,z) ∧ 
-                  (P(y,w) ⊃ (∃ u. Q(u,w)))) ∧ 
-                  (∀ x z. ¬ P(x,z) ⊃ (∃ y. Q(y,z))) ∧ 
-                  ((∃ x y. Q(x,y)) ⊃ (∀ x. R(x,x))) ⊃ 
+  , ("p37", [$form| (∀ z.
+                  ∃ w. ∀ x. ∃ y. (P(x,z) ⊃ P(y,w)) ∧ P(y,z) ∧
+                  (P(y,w) ⊃ (∃ u. Q(u,w)))) ∧
+                  (∀ x z. ¬ P(x,z) ⊃ (∃ y. Q(y,z))) ∧
+                  ((∃ x y. Q(x,y)) ⊃ (∀ x. R(x,x))) ⊃
                   (∀ x. ∃ y. R(x,y)) |])
 
-  , ("p38", [$form| (∀ x. 
-                    P(a) ∧ (P(x) ⊃ (∃ y. P(y) ∧ R(x,y))) ⊃ 
-                  (∃ z w. P(z) ∧ R(x,w) ∧ R(w,z))) ⇔ 
-                  (∀ x. 
-                  (¬ P(a) ∨ P(x) ∨ (∃ z w. P(z) ∧ R(x,w) ∧ R(w,z))) ∧ 
-                    (¬ P(a) ∨ ¬ (∃ y. P(y) ∧ R(x,y)) ∨ 
+  , ("p38", [$form| (∀ x.
+                    P(a) ∧ (P(x) ⊃ (∃ y. P(y) ∧ R(x,y))) ⊃
+                  (∃ z w. P(z) ∧ R(x,w) ∧ R(w,z))) ⇔
+                  (∀ x.
+                  (¬ P(a) ∨ P(x) ∨ (∃ z w. P(z) ∧ R(x,w) ∧ R(w,z))) ∧
+                    (¬ P(a) ∨ ¬ (∃ y. P(y) ∧ R(x,y)) ∨
                   (∃ z w. P(z) ∧ R(x,w) ∧ R(w,z)))) |])
 
   , ("p39", [$form| ¬ (∃ x. ∀ y. P(y,x) ⇔ ¬ P(y,y)) |])
 
-  , ("p40", [$form| (∃ y. ∀ x. P(x,y) ⇔ P(x,x)) 
+  , ("p40", [$form| (∃ y. ∀ x. P(x,y) ⇔ P(x,x))
                   ⊃ ¬ (∀ x. ∃ y. ∀ z. P(z,y) ⇔ ¬ P(z,x)) |])
 
-  , ("p41", [$form| (∀ z. ∃ y. ∀ x. P(x,y) ⇔ P(x,z) ∧ ¬ P(x,x)) 
+  , ("p41", [$form| (∀ z. ∃ y. ∀ x. P(x,y) ⇔ P(x,z) ∧ ¬ P(x,x))
                   ⊃ ¬ (∃ z. ∀ x. P(x,z)) |])
 
   , ("p42", [$form| ¬ (∃ y. ∀ x. P(x,y) ⇔ ¬ (∃ z. P(x,z) ∧ P(z,x))) |])
 
-  , ("p43", [$form| (∀ x y. Q(x,y) ⇔ ∀ z. P(z,x) ⇔ P(z,y)) 
+  , ("p43", [$form| (∀ x y. Q(x,y) ⇔ ∀ z. P(z,x) ⇔ P(z,y))
                     ⊃ ∀ x y. Q(x,y) ⇔ Q(y,x) |])
 
-  , ("p44", [$form| (∀ x. P(x) ⊃ (∃ y. G(y) ∧ H(x,y)) ∧ 
-                  (∃ y. G(y) ∧ ¬ H(x,y))) ∧ 
-                  (∃ x. J(x) ∧ (∀ y. G(y) ⊃ H(x,y))) 
+  , ("p44", [$form| (∀ x. P(x) ⊃ (∃ y. G(y) ∧ H(x,y)) ∧
+                  (∃ y. G(y) ∧ ¬ H(x,y))) ∧
+                  (∃ x. J(x) ∧ (∀ y. G(y) ⊃ H(x,y)))
                   ⊃ (∃ x. J(x) ∧ ¬ P(x)) |])
 
-  , ("p45", [$form|  (∀ x. P(x) ∧ (∀ y. G(y) ∧ H(x,y) ⊃ J(x,y))  
-                      ⊃ (∀ y. G(y) ∧ H(x,y) ⊃ R(y))) ∧           
-                   ¬ (∃ y. L(y) ∧ R(y)) ∧                             
-                      (∃ x. P(x) ∧ (∀ y. H(x,y) ⊃ L(y)) ∧     
-                    (∀ y. G(y) ∧ H(x,y) ⊃ J(x,y)))                  
+  , ("p45", [$form|  (∀ x. P(x) ∧ (∀ y. G(y) ∧ H(x,y) ⊃ J(x,y))
+                      ⊃ (∀ y. G(y) ∧ H(x,y) ⊃ R(y))) ∧
+                   ¬ (∃ y. L(y) ∧ R(y)) ∧
+                      (∃ x. P(x) ∧ (∀ y. H(x,y) ⊃ L(y)) ∧
+                    (∀ y. G(y) ∧ H(x,y) ⊃ J(x,y)))
                     ⊃ (∃ x. P(x) ∧ ¬ (∃ y. G(y) ∧ H(x,y))) |])
 
-  , ("p46", [$form| (∀ x. P(x) ∧ (∀ y. P(y) ∧ H(y,x) ⊃ G(y)) ⊃ G(x)) ∧ 
-                  ((∃ x. P(x) ∧ ¬ G(x)) ⊃ 
-                  (∃ x. P(x) ∧ ¬ G(x) ∧ 
-                  (∀ y. P(y) ∧ ¬ G(y) ⊃ J(x,y)))) ∧ 
-                  (∀ x y. P(x) ∧ P(y) ∧ H(x,y) ⊃ ¬ J(y,x)) ⊃ 
+  , ("p46", [$form| (∀ x. P(x) ∧ (∀ y. P(y) ∧ H(y,x) ⊃ G(y)) ⊃ G(x)) ∧
+                  ((∃ x. P(x) ∧ ¬ G(x)) ⊃
+                  (∃ x. P(x) ∧ ¬ G(x) ∧
+                  (∀ y. P(y) ∧ ¬ G(y) ⊃ J(x,y)))) ∧
+                  (∀ x y. P(x) ∧ P(y) ∧ H(x,y) ⊃ ¬ J(y,x)) ⊃
                   (∀ x. P(x) ⊃ G(x)) |])
 
-  , ("p55", [$form| lives(agatha) ∧ lives(butler) ∧ lives(charles) ∧ 
-                  (killed(agatha,agatha) ∨ killed(butler,agatha) ∨ 
-                  killed(charles,agatha)) ∧ 
-                  (∀ x y. killed(x,y) ⊃ hates(x,y) ∧ ¬ richer(x,y)) ∧ 
-                  (∀ x. hates(agatha,x) ⊃ ¬ hates(charles,x)) ∧ 
-                  (hates(agatha,agatha) ∧ hates(agatha,charles)) ∧ 
-                  (∀ x. lives(x) ∧ ¬ richer(x,agatha) ⊃ hates(butler,x)) ∧ 
-                  (∀ x. hates(agatha,x) ⊃ hates(butler,x)) ∧ 
-                  (∀ x. ¬ hates(x,agatha) ∨ ¬ hates(x,butler) ∨ ¬ hates(x,charles)) 
-                  ⊃ killed(agatha,agatha) ∧ 
-                  ¬ killed(butler,agatha) ∧ 
+  , ("p55", [$form| lives(agatha) ∧ lives(butler) ∧ lives(charles) ∧
+                  (killed(agatha,agatha) ∨ killed(butler,agatha) ∨
+                  killed(charles,agatha)) ∧
+                  (∀ x y. killed(x,y) ⊃ hates(x,y) ∧ ¬ richer(x,y)) ∧
+                  (∀ x. hates(agatha,x) ⊃ ¬ hates(charles,x)) ∧
+                  (hates(agatha,agatha) ∧ hates(agatha,charles)) ∧
+                  (∀ x. lives(x) ∧ ¬ richer(x,agatha) ⊃ hates(butler,x)) ∧
+                  (∀ x. hates(agatha,x) ⊃ hates(butler,x)) ∧
+                  (∀ x. ¬ hates(x,agatha) ∨ ¬ hates(x,butler) ∨ ¬ hates(x,charles))
+                  ⊃ killed(agatha,agatha) ∧
+                  ¬ killed(butler,agatha) ∧
                   ¬ killed(charles,agatha) |])
 
-  , ("p57", [$form| P(f((a),b),f(b,c)) ∧ 
-                  P(f(b,c),f(a,c)) ∧ 
-                  (∀ x y z. P(x,y) ∧ P(y,z) ⊃ P(x,z)) 
+  , ("p57", [$form| P(f((a),b),f(b,c)) ∧
+                  P(f(b,c),f(a,c)) ∧
+                  (∀ x y z. P(x,y) ∧ P(y,z) ⊃ P(x,z))
                   ⊃ P(f(a,b),f(a,c)) |])
-  , ("p58", [$form| ∀ P Q R. ∀ x. ∃ v. ∃ w. ∀ y. ∀ z. 
+  , ("p58", [$form| ∀ P Q R. ∀ x. ∃ v. ∃ w. ∀ y. ∀ z.
                   ((P(x) ∧ Q(y)) ⊃ ((P(v) ∨ R(w))  ∧ (R(z) ⊃ Q(v)))) |])
   , ("p59", [$form| (∀ x. P(x) ⇔ ¬ P(f(x))) ⊃ (∃ x. P(x) ∧ ¬ P(f(x))) |])
-  , ("p60", [$form| ∀ x. P(x,f(x)) ⇔ 
+  , ("p60", [$form| ∀ x. P(x,f(x)) ⇔
                         ∃ y. (∀ z. P(z,y) ⊃ P(z,f(x))) ∧ P(x,y) |])
 
 -- Gilmore
 
   , ("gilmore_1", [$form| ∃ x. ∀ y z.
-                         ((F(y) ⊃ G(y)) ⇔ F(x)) ∧ 
-                         ((F(y) ⊃ H(y)) ⇔ G(x)) ∧ 
-                         (((F(y) ⊃ G(y)) ⊃ H(y)) ⇔ H(x)) 
+                         ((F(y) ⊃ G(y)) ⇔ F(x)) ∧
+                         ((F(y) ⊃ H(y)) ⇔ G(x)) ∧
+                         (((F(y) ⊃ G(y)) ⊃ H(y)) ⇔ H(x))
                         ⊃ F(z) ∧ G(z) ∧ H(z) |])
 
-  , ("gilmore_2", [$form| ∃ x y. ∀ z. 
-                       (F(x,z) ⇔ F(z,y)) ∧ (F(z,y) ⇔ F(z,z)) ∧ (F(x,y) ⇔ F(y,x)) 
+  , ("gilmore_2", [$form| ∃ x y. ∀ z.
+                       (F(x,z) ⇔ F(z,y)) ∧ (F(z,y) ⇔ F(z,z)) ∧ (F(x,y) ⇔ F(y,x))
                        ⊃ (F(x,y) ⇔ F(x,z)) |])
 
-  , ("gilmore_3", [$form| ∃ x. ∀ y z. 
-                        ((F(y,z) ⊃ (G(y) ⊃ H(x))) ⊃ F(x,x)) ∧ 
-                        ((F(z,x) ⊃ G(x)) ⊃ H(z)) ∧ 
-                        F(x,y) 
+  , ("gilmore_3", [$form| ∃ x. ∀ y z.
+                        ((F(y,z) ⊃ (G(y) ⊃ H(x))) ⊃ F(x,x)) ∧
+                        ((F(z,x) ⊃ G(x)) ⊃ H(z)) ∧
+                        F(x,y)
                         ⊃ F(z,z) |])
 
-  , ("gilmore_4", [$form| ∃ x y. ∀ z. 
-                        (F(x,y) ⊃ F(y,z) ∧ F(z,z)) ∧ 
+  , ("gilmore_4", [$form| ∃ x y. ∀ z.
+                        (F(x,y) ⊃ F(y,z) ∧ F(z,z)) ∧
                         (F(x,y) ∧ G(x,y) ⊃ G(x,z) ∧ G(z,z)) |])
 
-  , ("gilmore_5", [$form| (∀ x. ∃ y. F(x,y) ∨ F(y,x)) ∧ 
-                          (∀ x y. F(y,x) ⊃ F(y,y)) 
+  , ("gilmore_5", [$form| (∀ x. ∃ y. F(x,y) ∨ F(y,x)) ∧
+                          (∀ x y. F(y,x) ⊃ F(y,y))
                         ⊃ ∃ z. F(z,z) |])
 
-  , ("gilmore_6", [$form| ∀ x. ∃ y. 
-                        (∃ u. ∀ v. F(u,x) ⊃ G(v,u) ∧ G(u,x)) 
-                        ⊃ (∃ u. ∀ v. F(u,y) ⊃ G(v,u) ∧ G(u,y)) ∨ 
+  , ("gilmore_6", [$form| ∀ x. ∃ y.
+                        (∃ u. ∀ v. F(u,x) ⊃ G(v,u) ∧ G(u,x))
+                        ⊃ (∃ u. ∀ v. F(u,y) ⊃ G(v,u) ∧ G(u,y)) ∨
                         (∀ u v. ∃ w. G(v,u) ∨ H(w,y,u) ⊃ G(u,w)) |])
 
-  , ("gilmore_7", [$form| (∀ x. K(x) ⊃ ∃ y. L(y) ∧ (F(x,y) ⊃ G(x,y))) ∧ 
-                        (∃ z. K(z) ∧ ∀ u. L(u) ⊃ F(z,u)) 
+  , ("gilmore_7", [$form| (∀ x. K(x) ⊃ ∃ y. L(y) ∧ (F(x,y) ⊃ G(x,y))) ∧
+                        (∃ z. K(z) ∧ ∀ u. L(u) ⊃ F(z,u))
                         ⊃ ∃ v w. K(v) ∧ L(w) ∧ G(v,w) |])
 
-  , ("gilmore_8", [$form| ∃ x. ∀ y z. 
-                        ((F(y,z) ⊃ (G(y) ⊃ (∀ u. ∃ v. H(u,v,x)))) ⊃ F(x,x)) ∧ 
-                        ((F(z,x) ⊃ G(x)) ⊃ (∀ u. ∃ v. H(u,v,z))) ∧ 
-                        F(x,y) 
+  , ("gilmore_8", [$form| ∃ x. ∀ y z.
+                        ((F(y,z) ⊃ (G(y) ⊃ (∀ u. ∃ v. H(u,v,x)))) ⊃ F(x,x)) ∧
+                        ((F(z,x) ⊃ G(x)) ⊃ (∀ u. ∃ v. H(u,v,z))) ∧
+                        F(x,y)
                         ⊃ F(z,z) |])
 
-  , ("gilmore_9", [$form| ∀ x. ∃ y. ∀ z. 
-                        ((∀ u. ∃ v. F(y,u,v) ∧ G(y,u) ∧ ¬ H(y,x)) 
-                        ⊃ (∀ u. ∃ v. F(x,u,v) ∧ G(z,u) ∧ ¬ H(x,z)) 
-                        ⊃ (∀ u. ∃ v. F(x,u,v) ∧ G(y,u) ∧ ¬ H(x,y))) ∧ 
-                        ((∀ u. ∃ v. F(x,u,v) ∧ G(y,u) ∧ ¬ H(x,y)) 
-                        ⊃ ¬ (∀ u. ∃ v. F(x,u,v) ∧ G(z,u) ∧ ¬ H(x,z)) 
-                        ⊃ (∀ u. ∃ v. F(y,u,v) ∧ G(y,u) ∧ ¬ H(y,x)) ∧ 
+  , ("gilmore_9", [$form| ∀ x. ∃ y. ∀ z.
+                        ((∀ u. ∃ v. F(y,u,v) ∧ G(y,u) ∧ ¬ H(y,x))
+                        ⊃ (∀ u. ∃ v. F(x,u,v) ∧ G(z,u) ∧ ¬ H(x,z))
+                        ⊃ (∀ u. ∃ v. F(x,u,v) ∧ G(y,u) ∧ ¬ H(x,y))) ∧
+                        ((∀ u. ∃ v. F(x,u,v) ∧ G(y,u) ∧ ¬ H(x,y))
+                        ⊃ ¬ (∀ u. ∃ v. F(x,u,v) ∧ G(z,u) ∧ ¬ H(x,z))
+                        ⊃ (∀ u. ∃ v. F(y,u,v) ∧ G(y,u) ∧ ¬ H(y,x)) ∧
                         (∀ u. ∃ v. F(z,u,v) ∧ G(y,u) ∧ ¬ H(z,y))) |])
 
 -- Misc
 
-  , ("davis_putnam_example", [$form| ∃ x. ∃ y. ∀ z. 
-                                   (F(x,y) ⊃ (F(y,z) ∧ F(z,z))) ∧ 
+  , ("davis_putnam_example", [$form| ∃ x. ∃ y. ∀ z.
+                                   (F(x,y) ⊃ (F(y,z) ∧ F(z,z))) ∧
                                    ((F(x,y) ∧ G(x,y)) ⊃ (G(x,z) ∧ G(z,z))) |])
 
-  , ("los", [$form| (∀ x y z. P(x,y) ∧ P(y,z) ⊃ P(x,z)) ∧ 
-                  (∀ x y z. Q(x,y) ∧ Q(y,z) ⊃ Q(x,z)) ∧ 
-                  (∀ x y. Q(x,y) ⊃ Q(y,x)) ∧ 
-                  (∀ x y. P(x,y) ∨ Q(x,y)) 
+  , ("los", [$form| (∀ x y z. P(x,y) ∧ P(y,z) ⊃ P(x,z)) ∧
+                  (∀ x y z. Q(x,y) ∧ Q(y,z) ⊃ Q(x,z)) ∧
+                  (∀ x y. Q(x,y) ⊃ Q(y,x)) ∧
+                  (∀ x y. P(x,y) ∨ Q(x,y))
                   ⊃ (∀ x y. P(x,y)) ∨ (∀ x y. Q(x,y)) |])
 
-  , ("steamroller", [$form| ((∀ x. P1(x) ⊃ P0(x)) ∧ (∃ x. P1(x))) ∧ 
-                         ((∀ x. P2(x) ⊃ P0(x)) ∧ (∃ x. P2(x))) ∧ 
-                         ((∀ x. P3(x) ⊃ P0(x)) ∧ (∃ x. P3(x))) ∧ 
-                         ((∀ x. P4(x) ⊃ P0(x)) ∧ (∃ x. P4(x))) ∧ 
-                         ((∀ x. P5(x) ⊃ P0(x)) ∧ (∃ x. P5(x))) ∧ 
-                         ((∃ x. Q1(x)) ∧ (∀ x. Q1(x) ⊃ Q0(x))) ∧ 
-                         (∀ x. P0(x) 
-                             ⊃ (∀ y. Q0(y) ⊃ R(x,y)) ∨ 
-                                  ((∀ y. P0(y) ∧ S0(y,x) ∧ 
-                                      (∃ z. Q0(z) ∧ R(y,z)) 
-                                         ⊃ R(x,y)))) ∧ 
-                         (∀ x y. P3(y) ∧ (P5(x) ∨ P4(x)) ⊃ S0(x,y)) ∧ 
-                         (∀ x y. P3(x) ∧ P2(y) ⊃ S0(x,y)) ∧ 
-                         (∀ x y. P2(x) ∧ P1(y) ⊃ S0(x,y)) ∧ 
-                         (∀ x y. P1(x) ∧ (P2(y) ∨ Q1(y)) ⊃ ¬ (R(x,y))) ∧ 
-                         (∀ x y. P3(x) ∧ P4(y) ⊃ R(x,y)) ∧ 
-                         (∀ x y. P3(x) ∧ P5(y) ⊃ ¬ (R(x,y))) ∧ 
-                         (∀ x. (P4(x) ∨ P5(x)) ⊃ ∃ y. Q0(y) ∧ R(x,y)) 
-                         ⊃ ∃ x y. P0(x) ∧ P0(y) ∧ 
+  , ("steamroller", [$form| ((∀ x. P1(x) ⊃ P0(x)) ∧ (∃ x. P1(x))) ∧
+                         ((∀ x. P2(x) ⊃ P0(x)) ∧ (∃ x. P2(x))) ∧
+                         ((∀ x. P3(x) ⊃ P0(x)) ∧ (∃ x. P3(x))) ∧
+                         ((∀ x. P4(x) ⊃ P0(x)) ∧ (∃ x. P4(x))) ∧
+                         ((∀ x. P5(x) ⊃ P0(x)) ∧ (∃ x. P5(x))) ∧
+                         ((∃ x. Q1(x)) ∧ (∀ x. Q1(x) ⊃ Q0(x))) ∧
+                         (∀ x. P0(x)
+                             ⊃ (∀ y. Q0(y) ⊃ R(x,y)) ∨
+                                  ((∀ y. P0(y) ∧ S0(y,x) ∧
+                                      (∃ z. Q0(z) ∧ R(y,z))
+                                         ⊃ R(x,y)))) ∧
+                         (∀ x y. P3(y) ∧ (P5(x) ∨ P4(x)) ⊃ S0(x,y)) ∧
+                         (∀ x y. P3(x) ∧ P2(y) ⊃ S0(x,y)) ∧
+                         (∀ x y. P2(x) ∧ P1(y) ⊃ S0(x,y)) ∧
+                         (∀ x y. P1(x) ∧ (P2(y) ∨ Q1(y)) ⊃ ¬ (R(x,y))) ∧
+                         (∀ x y. P3(x) ∧ P4(y) ⊃ R(x,y)) ∧
+                         (∀ x y. P3(x) ∧ P5(y) ⊃ ¬ (R(x,y))) ∧
+                         (∀ x. (P4(x) ∨ P5(x)) ⊃ ∃ y. Q0(y) ∧ R(x,y))
+                         ⊃ ∃ x y. P0(x) ∧ P0(y) ∧
                                  ∃ z. Q1(z) ∧ R(y,z) ∧ R(x,y) |])
 
-  , ("wishnu", [$form| (∃ x. x = f(g(x)) ∧ ∀ x'. x' = f(g(x')) ⊃ x = x') ⇔ 
+  , ("wishnu", [$form| (∃ x. x = f(g(x)) ∧ ∀ x'. x' = f(g(x')) ⊃ x = x') ⇔
            (∃ y. y = g(f(y)) ∧ ∀ y'. y' = g(f(y')) ⊃ y = y') |])
 
-  , ("eq1", [$form| (∀ x y z. x * (y * z) = (x * y) * z) ∧ 
-                  (∀ x. 1 * x = x) ∧ 
-                  (∀ x. i(x) * x = 1) 
+  , ("eq1", [$form| (∀ x y z. x * (y * z) = (x * y) * z) ∧
+                  (∀ x. 1 * x = x) ∧
+                  (∀ x. i(x) * x = 1)
                   ⊃ ∀ x. x * i(x) = 1 |])
 
-  , ("eq2", [$form| (∀ x y z. x * (y * z) = (x * y) * z) ∧ 
-                  (∀ x. 1 * x = x) ∧ 
-                  (∀ x. x * 1 = x) ∧ 
-                  (∀ x. x * x = 1) 
+  , ("eq2", [$form| (∀ x y z. x * (y * z) = (x * y) * z) ∧
+                  (∀ x. 1 * x = x) ∧
+                  (∀ x. x * 1 = x) ∧
+                  (∀ x. x * x = 1)
                   ⊃ ∀ x y. x * y  = y * x |])
 
 
-  , ("eq3", [$form| (∀ x. x = x) ∧ 
-                  (∀ x y z. x * (y * z) = (x * y) * z) ∧ 
-                  (∀ x y z. (x * y) * z = x * (y * z)) ∧ 
-                  (∀ x. 1 * x = x) ∧ 
-                  (∀ x. x = 1 * x) ∧ 
-                  (∀ x. i(x) * x = 1) ∧ 
-                  (∀ x. 1 = i(x) * x) ∧ 
-                  (∀ x y. x = y ⊃ i(x) = i(y)) ∧ 
-                  (∀ x y z. x = y ⊃ x * z = y * z) ∧ 
-                  (∀ x y z. x = y ⊃ z * x = z * y) ∧ 
+  , ("eq3", [$form| (∀ x. x = x) ∧
+                  (∀ x y z. x * (y * z) = (x * y) * z) ∧
+                  (∀ x y z. (x * y) * z = x * (y * z)) ∧
+                  (∀ x. 1 * x = x) ∧
+                  (∀ x. x = 1 * x) ∧
+                  (∀ x. i(x) * x = 1) ∧
+                  (∀ x. 1 = i(x) * x) ∧
+                  (∀ x y. x = y ⊃ i(x) = i(y)) ∧
+                  (∀ x y z. x = y ⊃ x * z = y * z) ∧
+                  (∀ x y z. x = y ⊃ z * x = z * y) ∧
                   (∀ x y z. x = y ∧ y = z ⊃ x = z)
                   ⊃ ∀ x. x * i(x) = 1 |])
 
 
-  , ("eq4", [$form| (∀ x y z. axiom(x * (y * z),(x * y) * z)) ∧ 
-                  (∀ x y z. axiom((x * y) * z,x * (y * z)) ∧ 
-                  (∀ x. axiom(1 * x,x)) ∧ 
-                  (∀ x. axiom(x,1 * x)) ∧ 
-                  (∀ x. axiom(i(x) * x,1)) ∧ 
-                  (∀ x. axiom(1,i(x) * x)) ∧ 
-                  (∀ x x'. x = x' ⊃ cchain(i(x),i(x'))) ∧ 
-                  (∀ x x' y y'. x = x' ∧ y = y' ⊃ cchain(x * y,x' * y'))) ∧ 
-                  (∀ s t. axiom(s,t) ⊃ achain(s,t)) ∧ 
-                  (∀ s t u. axiom(s,t) ∧ (t = u) ⊃ achain(s,u)) ∧ 
-                  (∀ x x' u. x = x' ∧ achain(i(x'),u) ⊃ cchain(i(x),u)) ∧ 
-                  (∀ x x' y y' u. 
-                  x = x' ∧ y = y' ∧ achain(x' * y',u) ⊃ cchain(x * y,u)) ∧ 
-                  (∀ s t. cchain(s,t) ⊃ s = t) ∧ 
-                  (∀ s t. achain(s,t) ⊃ s = t) ∧ 
-                  (∀ t. t = t) 
+  , ("eq4", [$form| (∀ x y z. axiom(x * (y * z),(x * y) * z)) ∧
+                  (∀ x y z. axiom((x * y) * z,x * (y * z)) ∧
+                  (∀ x. axiom(1 * x,x)) ∧
+                  (∀ x. axiom(x,1 * x)) ∧
+                  (∀ x. axiom(i(x) * x,1)) ∧
+                  (∀ x. axiom(1,i(x) * x)) ∧
+                  (∀ x x'. x = x' ⊃ cchain(i(x),i(x'))) ∧
+                  (∀ x x' y y'. x = x' ∧ y = y' ⊃ cchain(x * y,x' * y'))) ∧
+                  (∀ s t. axiom(s,t) ⊃ achain(s,t)) ∧
+                  (∀ s t u. axiom(s,t) ∧ (t = u) ⊃ achain(s,u)) ∧
+                  (∀ x x' u. x = x' ∧ achain(i(x'),u) ⊃ cchain(i(x),u)) ∧
+                  (∀ x x' y y' u.
+                  x = x' ∧ y = y' ∧ achain(x' * y',u) ⊃ cchain(x * y,u)) ∧
+                  (∀ s t. cchain(s,t) ⊃ s = t) ∧
+                  (∀ s t. achain(s,t) ⊃ s = t) ∧
+                  (∀ t. t = t)
                   ⊃ ∀ x. x * i(x) = 1 |])
 
-  , ("eq5", [$form| (∀ x y z. axiom(x * (y * z),(x * y) * z)) ∧ 
-                  (∀ x y z. axiom((x * y) * z,x * (y * z)) ∧ 
-                  (∀ x. axiom(1 * x,x)) ∧ 
-                  (∀ x. axiom(x,1 * x)) ∧ 
-                  (∀ x. axiom(i(x) * x,1)) ∧ 
-                  (∀ x. axiom(1,i(x) * x)) ∧ 
-                  (∀ x x'. x = x' ⊃ cong(i(x),i(x'))) ∧ 
-                  (∀ x x' y y'. x = x' ∧ y = y' ⊃ cong(x * y,x' * y'))) ∧ 
-                  (∀ s t. axiom(s,t) ⊃ achain(s,t)) ∧ 
-                  (∀ s t. cong(s,t) ⊃ cchain(s,t)) ∧ 
-                  (∀ s t u. axiom(s,t) ∧ (t = u) ⊃ achain(s,u)) ∧ 
-                  (∀ s t u. cong(s,t) ∧ achain(t,u) ⊃ cchain(s,u)) ∧ 
-                  (∀ s t. cchain(s,t) ⊃ s = t) ∧ 
-                  (∀ s t. achain(s,t) ⊃ s = t) ∧ 
-                  (∀ t. t = t) 
-                  ⊃ ∀ x. x * i(x) = 1 |]) 
+  , ("eq5", [$form| (∀ x y z. axiom(x * (y * z),(x * y) * z)) ∧
+                  (∀ x y z. axiom((x * y) * z,x * (y * z)) ∧
+                  (∀ x. axiom(1 * x,x)) ∧
+                  (∀ x. axiom(x,1 * x)) ∧
+                  (∀ x. axiom(i(x) * x,1)) ∧
+                  (∀ x. axiom(1,i(x) * x)) ∧
+                  (∀ x x'. x = x' ⊃ cong(i(x),i(x'))) ∧
+                  (∀ x x' y y'. x = x' ∧ y = y' ⊃ cong(x * y,x' * y'))) ∧
+                  (∀ s t. axiom(s,t) ⊃ achain(s,t)) ∧
+                  (∀ s t. cong(s,t) ⊃ cchain(s,t)) ∧
+                  (∀ s t u. axiom(s,t) ∧ (t = u) ⊃ achain(s,u)) ∧
+                  (∀ s t u. cong(s,t) ∧ achain(t,u) ⊃ cchain(s,u)) ∧
+                  (∀ s t. cchain(s,t) ⊃ s = t) ∧
+                  (∀ s t. achain(s,t) ⊃ s = t) ∧
+                  (∀ t. t = t)
+                  ⊃ ∀ x. x * i(x) = 1 |])
 
-  , ("eq6", [$form| axiom(f(f(f(f(f(c))))),c) ∧ 
-                  axiom(c,f(f(f(f(f(c)))))) ∧ 
-                  axiom(f(f(f(c))),c) ∧ 
-                  axiom(c,f(f(f(c)))) ∧ 
-                  (∀ s t. axiom(s,t) ⊃ achain(s,t)) ∧ 
-                  (∀ s t. cong(s,t) ⊃ cchain(s,t)) ∧ 
-                  (∀ s t u. axiom(s,t) ∧ (t = u) ⊃ achain(s,u)) ∧ 
-                  (∀ s t u. cong(s,t) ∧ achain(t,u) ⊃ cchain(s,u)) ∧ 
-                  (∀ s t. cchain(s,t) ⊃ s = t) ∧ 
-                  (∀ s t. achain(s,t) ⊃ s = t) ∧ 
-                  (∀ t. t = t) ∧ 
-                  (∀ x y. x = y ⊃ cong(f(x),f(y))) 
+  , ("eq6", [$form| axiom(f(f(f(f(f(c))))),c) ∧
+                  axiom(c,f(f(f(f(f(c)))))) ∧
+                  axiom(f(f(f(c))),c) ∧
+                  axiom(c,f(f(f(c)))) ∧
+                  (∀ s t. axiom(s,t) ⊃ achain(s,t)) ∧
+                  (∀ s t. cong(s,t) ⊃ cchain(s,t)) ∧
+                  (∀ s t u. axiom(s,t) ∧ (t = u) ⊃ achain(s,u)) ∧
+                  (∀ s t u. cong(s,t) ∧ achain(t,u) ⊃ cchain(s,u)) ∧
+                  (∀ s t. cchain(s,t) ⊃ s = t) ∧
+                  (∀ s t. achain(s,t) ⊃ s = t) ∧
+                  (∀ t. t = t) ∧
+                  (∀ x y. x = y ⊃ cong(f(x),f(y)))
                   ⊃ f(c) = c |])
 
-  , ("eq7", [$form| (∀ x y z. eqA (x * (y * z),(x * y) * z)) ∧ 
-                  (∀ x y z. eqA ((x * y) * z)) ∧ 
-                  (∀ x. eqA (1 * x,x)) ∧ 
-                  (∀ x. eqA (x,1 * x)) ∧ 
-                  (∀ x. eqA (i(x) * x,1)) ∧ 
-                  (∀ x. eqA (1,i(x) * x)) ∧ 
-                  (∀ x. eqA (x,x)) ∧ 
-                  (∀ x y. eqA (x,y) ⊃ eqC (i(x),i(y))) ∧ 
-                  (∀ x y. eqC (x,y) ⊃ eqC (i(x),i(y))) ∧ 
-                  (∀ x y. eqT (x,y) ⊃ eqC (i(x),i(y))) ∧ 
-                  (∀ w x y z. eqA (w,x) ∧ eqA (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqA (w,x) ∧ eqC (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqA (w,x) ∧ eqT (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqC (w,x) ∧ eqA (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqC (w,x) ∧ eqC (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqC (w,x) ∧ eqT (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqT (w,x) ∧ eqA (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqT (w,x) ∧ eqC (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ w x y z. eqT (w,x) ∧ eqT (y,z) ⊃ eqC (w * y,x * z)) ∧ 
-                  (∀ x y z. eqA (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧ 
-                  (∀ x y z. eqC (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧ 
-                  (∀ x y z. eqA (x,y) ∧ eqC (y,z) ⊃ eqT (x,z)) ∧ 
-                  (∀ x y z. eqA (x,y) ∧ eqT (y,z) ⊃ eqT (x,z)) ∧ 
-                  (∀ x y z. eqC (x,y) ∧ eqT (y,z) ⊃ eqT (x,z)) 
-                  ⊃ ∀ x. eqT (x * i(x),1) |]) 
+  , ("eq7", [$form| (∀ x y z. eqA (x * (y * z),(x * y) * z)) ∧
+                  (∀ x y z. eqA ((x * y) * z)) ∧
+                  (∀ x. eqA (1 * x,x)) ∧
+                  (∀ x. eqA (x,1 * x)) ∧
+                  (∀ x. eqA (i(x) * x,1)) ∧
+                  (∀ x. eqA (1,i(x) * x)) ∧
+                  (∀ x. eqA (x,x)) ∧
+                  (∀ x y. eqA (x,y) ⊃ eqC (i(x),i(y))) ∧
+                  (∀ x y. eqC (x,y) ⊃ eqC (i(x),i(y))) ∧
+                  (∀ x y. eqT (x,y) ⊃ eqC (i(x),i(y))) ∧
+                  (∀ w x y z. eqA (w,x) ∧ eqA (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqA (w,x) ∧ eqC (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqA (w,x) ∧ eqT (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqC (w,x) ∧ eqA (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqC (w,x) ∧ eqC (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqC (w,x) ∧ eqT (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqT (w,x) ∧ eqA (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqT (w,x) ∧ eqC (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ w x y z. eqT (w,x) ∧ eqT (y,z) ⊃ eqC (w * y,x * z)) ∧
+                  (∀ x y z. eqA (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧
+                  (∀ x y z. eqC (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧
+                  (∀ x y z. eqA (x,y) ∧ eqC (y,z) ⊃ eqT (x,z)) ∧
+                  (∀ x y z. eqA (x,y) ∧ eqT (y,z) ⊃ eqT (x,z)) ∧
+                  (∀ x y z. eqC (x,y) ∧ eqT (y,z) ⊃ eqT (x,z))
+                  ⊃ ∀ x. eqT (x * i(x),1) |])
 
-  , ("eq8", [$form| (∀ x y z. eqA (x * (y * z),(x * y) * z)) ∧ 
-                 (∀ x y z. eqA ((x * y) * z)) ∧ 
-                 (∀ x. eqA (1 * x,x)) ∧ 
-                 (∀ x. eqA (x,1 * x)) ∧ 
-                 (∀ x. eqA (i(x) * x,1)) ∧ 
-                 (∀ x. eqA (1,i(x) * x)) ∧ 
-                 (∀ x y. eqA (x,y) ⊃ eqC (i(x),i(y))) ∧ 
-                 (∀ x y. eqC (x,y) ⊃ eqC (i(x),i(y))) ∧ 
-                 (∀ w x y. eqA (w,x) ⊃ eqC (w * y,x * y)) ∧ 
-                 (∀ w x y. eqC (w,x) ⊃ eqC (w * y,x * y)) ∧ 
-                 (∀ x y z. eqA (y,z) ⊃ eqC (x * y,x * z)) ∧ 
-                 (∀ x y z. eqC (y,z) ⊃ eqC (x * y,x * z)) ∧ 
-                 (∀ x y z. eqA (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧ 
-                 (∀ x y z. eqC (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧ 
-                 (∀ x y z. eqA (x,y) ∧ eqC (y,z) ⊃ eqT (x,z)) ∧ 
-                 (∀ x y z. eqC (x,y) ∧ eqC (y,z) ⊃ eqT (x,z)) ∧ 
-                 (∀ x y z. eqA (x,y) ∧ eqT (y,z) ⊃ eqT (x,z)) ∧ 
-                 (∀ x y z. eqC (x,y) ∧ eqT (y,z) ⊃ eqT (x,z)) 
-                 ⊃ ∀ x. eqT (x * i(x),1) ∨ eqC (x * i(x),1) |]) 
+  , ("eq8", [$form| (∀ x y z. eqA (x * (y * z),(x * y) * z)) ∧
+                 (∀ x y z. eqA ((x * y) * z)) ∧
+                 (∀ x. eqA (1 * x,x)) ∧
+                 (∀ x. eqA (x,1 * x)) ∧
+                 (∀ x. eqA (i(x) * x,1)) ∧
+                 (∀ x. eqA (1,i(x) * x)) ∧
+                 (∀ x y. eqA (x,y) ⊃ eqC (i(x),i(y))) ∧
+                 (∀ x y. eqC (x,y) ⊃ eqC (i(x),i(y))) ∧
+                 (∀ w x y. eqA (w,x) ⊃ eqC (w * y,x * y)) ∧
+                 (∀ w x y. eqC (w,x) ⊃ eqC (w * y,x * y)) ∧
+                 (∀ x y z. eqA (y,z) ⊃ eqC (x * y,x * z)) ∧
+                 (∀ x y z. eqC (y,z) ⊃ eqC (x * y,x * z)) ∧
+                 (∀ x y z. eqA (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧
+                 (∀ x y z. eqC (x,y) ∧ eqA (y,z) ⊃ eqT (x,z)) ∧
+                 (∀ x y z. eqA (x,y) ∧ eqC (y,z) ⊃ eqT (x,z)) ∧
+                 (∀ x y z. eqC (x,y) ∧ eqC (y,z) ⊃ eqT (x,z)) ∧
+                 (∀ x y z. eqA (x,y) ∧ eqT (y,z) ⊃ eqT (x,z)) ∧
+                 (∀ x y z. eqC (x,y) ∧ eqT (y,z) ⊃ eqT (x,z))
+                 ⊃ ∀ x. eqT (x * i(x),1) ∨ eqC (x * i(x),1) |])
 
-  , ("eq9", [$form| (∀ x y z. eq1(x * (y * z),(x * y) * z)) ∧ 
-                  (∀ x y z. eq1((x * y) * z,x * (y * z))) ∧ 
-                  (∀ x. eq1(1 * x,x)) ∧ 
-                  (∀ x. eq1(x,1 * x)) ∧ 
-                  (∀ x. eq1(i(x) * x,1)) ∧ 
-                  (∀ x. eq1(1,i(x) * x)) ∧ 
-                  (∀ x y z. eq1(x,y) ⊃ eq1(x * z,y * z)) ∧ 
-                  (∀ x y z. eq1(x,y) ⊃ eq1(z * x,z * y)) ∧ 
-                  (∀ x y z. eq1(x,y) ∧ eq2(y,z) ⊃ eq2(x,z)) ∧ 
-                  (∀ x y. eq1(x,y) ⊃ eq2(x,y)) 
-                  ⊃ ∀ x. eq2(x,i(x)) |]) 
+  , ("eq9", [$form| (∀ x y z. eq1(x * (y * z),(x * y) * z)) ∧
+                  (∀ x y z. eq1((x * y) * z,x * (y * z))) ∧
+                  (∀ x. eq1(1 * x,x)) ∧
+                  (∀ x. eq1(x,1 * x)) ∧
+                  (∀ x. eq1(i(x) * x,1)) ∧
+                  (∀ x. eq1(1,i(x) * x)) ∧
+                  (∀ x y z. eq1(x,y) ⊃ eq1(x * z,y * z)) ∧
+                  (∀ x y z. eq1(x,y) ⊃ eq1(z * x,z * y)) ∧
+                  (∀ x y z. eq1(x,y) ∧ eq2(y,z) ⊃ eq2(x,z)) ∧
+                  (∀ x y. eq1(x,y) ⊃ eq2(x,y))
+                  ⊃ ∀ x. eq2(x,i(x)) |])
 
-  , ("eq10", [$form| f(f(f(f(f(c))))) = c ∧ f(f(f(c))) = c 
+  , ("eq10", [$form| f(f(f(f(f(c))))) = c ∧ f(f(f(c))) = c
                    ⊃ f(c) = c ∨ f(g(c)) = g(f(c)) |])
 
   , ("eq11", [$form| ∀ c. f(f(f(f(f(c))))) = c ∧ f(f(f(c))) = c ⊃ f(c) = c |])
 
 -- eqelim.ml
 
-  , ("eq12", [$form| (∀ x. R(x,x)) ∧ 
-                   (∀ x y. R(x,y) ⊃  R(y,x)) ∧ 
-                   (∀ x y z. R(x,y) ∧ R(y,z) ⊃ R(x,z)) 
-                   ⇔ (∀ x y. R(x,y) ⇔ (∀ z. R(x,z) ⇔ R(y,z))) |]) 
+  , ("eq12", [$form| (∀ x. R(x,x)) ∧
+                   (∀ x y. R(x,y) ⊃  R(y,x)) ∧
+                   (∀ x y z. R(x,y) ∧ R(y,z) ⊃ R(x,z))
+                   ⇔ (∀ x y. R(x,y) ⇔ (∀ z. R(x,z) ⇔ R(y,z))) |])
 
-  , ("abel", [$form| (∀ x. P(1,x,x)) ∧ 
-         (∀ x. P(x,x,1)) ∧ 
-         (∀ u v w x y z. P(x,y,u) ∧ P(y,z,w) 
-                             ⊃ (P(x,w,v) ⇔ P(u,z,v))) 
+  , ("abel", [$form| (∀ x. P(1,x,x)) ∧
+         (∀ x. P(x,x,1)) ∧
+         (∀ u v w x y z. P(x,y,u) ∧ P(y,z,w)
+                             ⊃ (P(x,w,v) ⇔ P(u,z,v)))
            ⊃ ∀ a b c. P(a,b,c) ⊃ P(b,a,c) |])
 
   , ("abel_false", [$form| (∀ x. P(x,x,1)) ∧
@@ -647,13 +647,13 @@ formulas =
                                 P(x,y,u) ∧ P(y,z,w) ⊃ (P(x,w,v) ⇔ P(u,z,v)))
                              ⊃ ∀ a b c. P(a,b,c) ⊃ P(b,a,c) |])
 
-  , ("ewd1062", [$form| (∀ x. x ≤ x) ∧ 
-                      (∀ x y z. x ≤ y ∧ y ≤ z ⊃ x ≤ z) ∧ 
-                       (∀ x y. f(x) ≤ y ⇔ x ≤ g(y)) 
-                      ⊃ (∀ x y. x ≤ y ⊃ f(x) ≤ f(y)) ∧ 
+  , ("ewd1062", [$form| (∀ x. x ≤ x) ∧
+                      (∀ x y z. x ≤ y ∧ y ≤ z ⊃ x ≤ z) ∧
+                       (∀ x y. f(x) ≤ y ⇔ x ≤ g(y))
+                      ⊃ (∀ x y. x ≤ y ⊃ f(x) ≤ f(y)) ∧
                       (∀ x y. x ≤ y ⊃ g(x) ≤ g(y)) |])
 
--- paramodulation.ml 
+-- paramodulation.ml
 
   , ("para1", [$form| (∀ x. f(f(x)) = f(x)) ∧ (∀ x. ∃ y. f(y) = x)
    ⊃ ∀ x. f(x) = x |])
@@ -725,7 +725,7 @@ formulas =
   , ("pres13", [$form| ∀ x. a < x ⊃ b < x |])
   , ("pres14", [$form| ∀ x. a ≤ x ⊃ b < x |])
 
--- Formula examples from Cooper's paper. 
+-- Formula examples from Cooper's paper.
 
   , ("pres15", [$form| ∀ a b. ∃ x. a < 20 * x ∧ 20 * x < b |])
   , ("pres16", [$form| ∃ x. a < 20 * x ∧ 20 * x < b |])
@@ -733,7 +733,7 @@ formulas =
   , ("pres18", [$form| ∀ a. ∃ b. a < 4 * b + 3 * a ∨ (¬ (a < b) ∧ a > b + 1) |])
   , ("pres19", [$form| ∃ y. ∀ x. x + 5 * y > 1 ∧ 13 * x - y > 1 ∧ x + 2 < 0 |])
 
--- More of my own.                                                           
+-- More of my own.
 
   , ("pres20", [$form| ∀ x y. x ≥ 0 ∧ y ≥ 0
                   ⊃ 12 * x - 8 * y < 0 ∨ 12 * x - 8 * y > 2 |])
@@ -751,7 +751,7 @@ formulas =
   , ("pres32", [$form| ∀ x y. 6 * x = 5 * y ⊃ ∃ d. y = 3 * d |])
   , ("pres33", [$form| 6 * x = 5 * y ⊃ ∃ d. y = 3 * d |])
 
--- Positive variant of the Bezout theorem (see the exercise).                
+-- Positive variant of the Bezout theorem (see the exercise).
 
   , ("pres34", [$form| ∀ z. z > 7 ⊃ ∃ x y. x ≥ 0 ∧ y ≥ 0 ∧ 3 * x + 5 * y = z |])
   , ("pres35", [$form| ∀ z. z > 2 ⊃ ∃ x y. x ≥ 0 ∧ y ≥ 0 ∧ 3 * x + 5 * y = z |])
@@ -760,7 +760,7 @@ formulas =
         ⊃ ((∃ x y. x ≥ 0 ∧ y ≥ 0 ∧ 3 * x + 5 * y = z) ⇔
              ¬ (∃ x y. x ≥ 0 ∧ y ≥ 0 ∧ 3 * x + 5 * y = 7 - z)) |])
 
--- Basic result about congruences.                                           
+-- Basic result about congruences.
 
   , ("pres37", [$form| ∀ x. ¬ divides(2,x) ∧ divides(3,x-1) ⇔
               divides(12,x-1) ∨ divides(12,x-7) |])
@@ -781,11 +781,11 @@ formulas =
             divides(24,x-5) ∨
             divides(24,x-11) |])
 
--- Testing fix for an earlier version with negative result from formlcm.     
+-- Testing fix for an earlier version with negative result from formlcm.
 
   , ("pres40", [$form| a + 2 = b ∧ v_3 = b - a + 1 ∧ v_2 = b - 2 ∧ v_1 = 3 ⊃ ⊥ |])
 
--- Inspired by the Collatz conjecture.                                       
+-- Inspired by the Collatz conjecture.
 
   , ("pres41", [$form| ∃ a b. ¬ (a = 1) ∧ ((2 * b = a) ∨ (2 * b = 3 * a + 1)) ∧ (a = b) |])
   , ("pres42", [$form| ∃ a b. a > 1 ∧ b > 1 ∧
@@ -814,16 +814,16 @@ formulas =
         ∀ x. x ≥ l
                   ⊃ ∃ u v. u ≥ 0 ∧ v ≥ 0 ∧ x = 3 * u + 8 * v |])
 
-{-  
+{-
  FIXME: This one explodes memory to 1GB within a few seconds.  Investigate
  when you get a chance.
--}  
+-}
 
   , ("pres49", [$form| ∃ l.
         ∀ x. x ≥ l
                   ⊃ ∃ u v. u ≥ 0 ∧ v ≥ 0 ∧ x = 7 * u + 8 * v |])
 
--- Example from reciprocal mult: (2622 * x)>>16 = x/100 within a range.      
+-- Example from reciprocal mult: (2622 * x)>>16 = x/100 within a range.
 
   , ("pres50", [$form| ∀ x q1 q2 r1 r2.
         x < 4699 ∧
@@ -864,32 +864,32 @@ formulas =
   , ("nelop3", [$form| a ≤ b ∧ b ≤ f(a) ∧ f(a) ≤ 1
   ⊃ a + b ≤ 1 ∨ b + f(b) ≤ 1 ∨ f(f(b)) ≤ f(a) |])
 
--- Failures of original Shostak procedure.                                   
+-- Failures of original Shostak procedure.
 
   , ("nelop4", [$form| f(v - 1) - 1 = v + 1 ∧ f(u) + 1 = u - 1 ∧ u + 1 = v ⊃ ⊥ |])
 
--- And this one is where the original procedure loops 
+-- And this one is where the original procedure loops
 
   , ("nelop5", [$form| f(v) = v ∧ f(u) = u - 1 ∧ u = v ⊃ ⊥ |])
 
--- This is on p. 8 of Shostak's "Deciding combinations" paper 
+-- This is on p. 8 of Shostak's "Deciding combinations" paper
 
   , ("nelop6", [$form| z = f(x - y) ∧ x = z + y ∧ ¬ (-(y) = -(x - f(f(z)))) ⊃ ⊥ |])
 
--- This (ICS theories-1) fails without array operations 
+-- This (ICS theories-1) fails without array operations
 
   , ("nelop7", [$form| a + 2 = b ⊃ f(read(update(A,a,3),b-2)) = f(b - a + 1) |])
 
--- can-001 from ICS examples site, with if-then-elses expanded manually 
+-- can-001 from ICS examples site, with if-then-elses expanded manually
 
   , ("nelop8", [$form| (x = y ∧ z = 1 ⊃ f(f((x+z))) = f(f((1+y)))) |])
 
--- RJB example; lists plus uninterpreted functions 
+-- RJB example; lists plus uninterpreted functions
 
   , ("nelop9", [$form| hd(x) = hd(y) ∧ tl(x) = tl(y) ∧ ¬ (x = nil) ∧ ¬ (y = nil)
    ⊃ f(x) = f(y) |])
 
--- Another one from the ICS paper 
+-- Another one from the ICS paper
 
   , ("nelop10", [$form| ¬ (f(f(x) - f(y)) = f(z)) ∧ y ≤ x ∧ y ≥ x + z ∧ z ≥ 0 ⊃ ⊥ |])
 
@@ -899,27 +899,27 @@ formulas =
 
   , ("nelop11", [$form| x < f(y) + 1 ∧ f(y) ≤ x ⊃ (P(x,y) ⇔ P(f(y),y)) |])
 
--- Shostak's "Practical..." paper again, using extra clauses for MAX 
+-- Shostak's "Practical..." paper again, using extra clauses for MAX
 
   , ("nelop12", [$form| (x ≥ y ⊃ MAX(x,y) = x) ∧ (y ≥ x ⊃ MAX(x,y) = y)
                           ⊃ x = y + 2 ⊃ MAX(x,y) = x |])
 
--- Shostak's "Practical..." paper again 
+-- Shostak's "Practical..." paper again
 
   , ("nelop13", [$form| x ≤ g(x) ∧ x ≥ g(x) ⊃ x = g(g(g(g(x)))) |])
 
--- Easy example I invented 
+-- Easy example I invented
 
   , ("nelop14", [$form| x^2 =  1 ⊃ (f(x) = f(-(x)))  ⊃ (f(x) = f(1)) |])
 
--- Taken from Clark Barrett's CVC page 
+-- Taken from Clark Barrett's CVC page
 
   , ("nelop15", [$form| 2 * f(x + y) = 3 * y ∧ 2 * x = y ⊃ f(f(x + y)) = 3 * x |])
 
-{- 
+{-
 My former running example in the text; seems too slow.
 Anyway this also needs extra predicates in CC
--} 
+-}
 
   , ("nelop16", [$form| x^2 = y^2 ∧ x < y ∧ z^2 = z ∧ x < x * z ∧ P(f(1 + z))
                               ⊃ P(f(x + y) - f(0)) |])
@@ -931,7 +931,7 @@ Anyway this also needs extra predicates in CC
 
 -- DKAL
 
-  , ("alice1", [$form| 
+  , ("alice1", [$form|
        ((curTime(alice) < licExp(X) ∧
        curTime(alice) < licExp(X)) ∧
       curTime(alice) < licExp(Y)) ⊃
@@ -939,7 +939,7 @@ Anyway this also needs extra predicates in CC
        curTime(alice) < licExp(Y)) ∧
        curTime(alice) < licExp(Y)) |])
 
-  , ("alice2", [$form| 
+  , ("alice2", [$form|
       ((curTime(alice) < licExp(X) ∧ ⊤ ∧ ⊤ ∧ ⊤) ∧
        curTime(alice) < licExp(X) ∧ ⊤ ∧ ⊤ ∧ ⊤) ∧
       curTime(alice) < licExp(Y) ∧ ⊤ ∧ ⊤ ∧ ⊤ ⊃
@@ -953,11 +953,11 @@ Anyway this also needs extra predicates in CC
 
   , ("cplx2", [$form| ∀ a x. a^2 = 2 ∧ x^2 + a * x + 1 = 0 ⊃ x^4 + c = 0 |])
 
-  , ("cplx3", [$form| 
+  , ("cplx3", [$form|
        ∀ c. (∀ a x. a^2 = 2 ∧ x^2 + a * x + 1 = 0 ⊃ x^4 + c = 0)
            ⇔ c = 1 |])
 
-  , ("cplx4", [$form| 
+  , ("cplx4", [$form|
      ∀ a b c x y.
       a * x^2 + b * x + c = 0 ∧ a * y^2 + b * y + c = 0 ∧ ~(x = y)
       ⊃ a * x * y = c ∧ a * (x + y) + b = 0 |])
@@ -1235,8 +1235,8 @@ Anyway this also needs extra predicates in CC
   , ("cplx65", [$form| ∀ x1 y1 x2 y2. ∃ a b.
       ~(a = 0 ∧ b = 0) ∧ a * x1 + b * y1 = 0 ∧ a * x2 + b * y2 = 0 |])
 
-  , ("cplx66", [$form| ∀ x y. (a * x^2 + b * x + c = 0) ∧ 
-              (a * y^2 + b * y + c = 0) ∧ 
+  , ("cplx66", [$form| ∀ x y. (a * x^2 + b * x + c = 0) ∧
+              (a * y^2 + b * y + c = 0) ∧
               (∀ z. (a * z^2 + b * z + c = 0)
                          ⊃ (z = x) ∨ (z = y))
               ⊃ (a * x * y = c) ∧ (a * (x + y) + b = 0) |])
@@ -1311,7 +1311,7 @@ Anyway this also needs extra predicates in CC
             ~(u3 = 0)
             ⊃ (2 * u2 * x4 + 2 * u3 * x3 - u3^2 - u2^2 = 0) |])
 
--- Checking resultants (in one direction) 
+-- Checking resultants (in one direction)
 
   , ("grob9", [$form| a * x^2 + b * x + c = 0 ∧ 2 * a * x + b = 0 ⊃ 4*a^2*c-b^2*a = 0 |])
 
@@ -1358,11 +1358,11 @@ Anyway this also needs extra predicates in CC
             ~(d = 0) ∧ ~(e = 0)
             ⊃ x0 = x0' ∧ y0 = y0' |])
 
--- Inversion of homographic function (from Gosper's CF notes).               
+-- Inversion of homographic function (from Gosper's CF notes).
 
   , ("grob16", [$form| y * (c * x + d) = a * x + b ⊃ x * (c * y - a) = b - d * y |])
 
--- Manual "sums of squares" for 0 <= a ∧ a <= b ⊃ a^3 <= b^3.             
+-- Manual "sums of squares" for 0 <= a ∧ a <= b ⊃ a^3 <= b^3.
 
   , ("grob17", [$form| ∀ a b c d e.
      a = c^2 ∧ b = a + d^2 ∧ (b^3 - a^3) * e^2 + 1 = 0
@@ -1373,7 +1373,7 @@ Anyway this also needs extra predicates in CC
        ⊃ (a * d * e)^2 + (c^2 * d * e)^2 + (c * d^2 * e)^2 + (b * d * e)^2 + 1 =
           0 |])
 
--- Special case of a = 1, i.e. 1 <= b ⊃ 1 <= b^3                           
+-- Special case of a = 1, i.e. 1 <= b ⊃ 1 <= b^3
 
   , ("grob19", [$form| ∀ b d e.
      b = 1 + d^2 ∧ (b^3 - 1) * e^2 + 1 = 0
@@ -1382,22 +1382,22 @@ Anyway this also needs extra predicates in CC
   , ("grob20", [$form| b = 1 + d^2 ∧ (b^3 - 1) * e^2 + 1 = 0
       ⊃ 2 * (d * e)^2 + (d^2 * e)^2 + (b * d * e)^2 + 1 =  0 |])
 
-{- 
+{-
 (* ------------------------------------------------------------------------- *)
 (* Converse, 0 <= a ∧ a^3 <= b^3 ⊃ a <= b                                 *)
 (*                                                                           *)
 (* This derives b <= 0, but not a full solution.                             *)
 (* ------------------------------------------------------------------------- *)
--} 
+-}
 
-  , ("grob21", [$form| a = c^2 ∧ b^3 = a^3 + d^2 ∧ (b - a) * e^2 + 1 = 0 
+  , ("grob21", [$form| a = c^2 ∧ b^3 = a^3 + d^2 ∧ (b - a) * e^2 + 1 = 0
                  ⊃ c^2 * b + a^2 + b^2 + (e * d)^2 = 0 |])
 
-{- 
+{-
 (* ------------------------------------------------------------------------- *)
 (* Here are further steps towards a solution, step-by-step.                  *)
 (* ------------------------------------------------------------------------- *)
--} 
+-}
 
   , ("grob22", [$form| a = c^2 ∧ b^3 = a^3 + d^2 ∧ (b - a) * e^2 + 1 = 0
    ⊃ c^2 * b = -(a^2 + b^2 + (e * d)^2) |])
@@ -1408,22 +1408,22 @@ Anyway this also needs extra predicates in CC
   , ("grob24", [$form| a = c^2 ∧ b^3 = a^3 + d^2 ∧ (b - a) * e^2 + 1 = 0
    ⊃ c^6 * (c^6 + d^2) + (a^2 + b^2 + (e * d)^2)^3 = 0 |])
 
-{- 
+{-
 (* ------------------------------------------------------------------------- *)
 (* A simpler one is ~(x < y ∧ y < x), i.e. x < y ⊃ x <= y.                  *)
 (*                                                                           *)
 (* Yet even this isn't completed!                                            *)
 (* ------------------------------------------------------------------------- *)
--} 
+-}
 
   , ("grob25", [$form| (y - x) * s^2 = 1 ∧ (x - y) * t^2 = 1 ⊃ s^2 + t^2 = 0 |])
 
-{- 
+{-
 (* ------------------------------------------------------------------------- *)
 (* Inspired by Cardano's formula for a cubic. This actually works worse than *)
 (* with naive quantifier elimination (of course it's false...)               *)
 (* ------------------------------------------------------------------------- *)
--} 
+-}
 
   , ("grob26", [$form| t - u = n ∧ 27 * t * u = m^3 ∧
    ct^3 = t ∧ cu^3 = u ∧

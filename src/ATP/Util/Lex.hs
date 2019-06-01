@@ -1,5 +1,5 @@
 
-module ATP.Util.Lex 
+module ATP.Util.Lex
   ( -- * Parser constructors
     genParser
   , genParser'
@@ -25,7 +25,7 @@ module ATP.Util.Lex
   )
 where
 
-import Prelude 
+import Prelude
 import qualified ATP.Util.Monad as M
 import qualified Text.ParserCombinators.Parsec as P
 import Text.ParserCombinators.Parsec (Parser)
@@ -34,16 +34,16 @@ import qualified Text.ParserCombinators.Parsec.Language as L
 import qualified Text.ParserCombinators.Parsec.Token as T
 
 lang :: L.LanguageDef ()
-lang = L.emptyDef 
+lang = L.emptyDef
   { L.reservedOpNames = [ "/\\", "∧"
-                        , "\\/", "∨" 
+                        , "\\/", "∨"
                         , "==>", "⊃"
                         , "<=>", "⇔"
                         , "~", "¬"
                         , "::", "+", "-", "*", "/", "^"
-                        , "=", "<", "<=", "≤", ">", ">=", "≥" 
+                        , "=", "<", "<=", "≤", ">", ">=", "≥"
                         , ":-", "%"
-                        ] 
+                        ]
   , L.reservedNames = [ "true", "⊤"
                       , "false", "⊥"
                       , "forall", "∀"
@@ -52,7 +52,7 @@ lang = L.emptyDef
   , L.commentLine = "--"
   }
 
-lexer :: T.TokenParser () 
+lexer :: T.TokenParser ()
 lexer = T.makeTokenParser lang
 
 whiteSpace :: Parser ()
@@ -75,7 +75,7 @@ identifier :: Parser String
 identifier = T.identifier lexer
 
 lowerIdentifier :: Parser String
-lowerIdentifier = T.lexeme lexer 
+lowerIdentifier = T.lexeme lexer
                    (do x <- C.lower
                        xs <- P.many (L.identLetter lang)
                        return $ x : xs)
@@ -101,23 +101,23 @@ symbol = T.symbol lexer
 -- * Parsers
 
 genParser' :: Parser () -> Parser a -> String -> Maybe a
-genParser' space p input = 
+genParser' space p input =
   case P.runParser p' () "" input of
     Left _ -> Nothing
     Right e -> Just e
  where p' = do space
                x <- p
-               P.eof 
+               P.eof
                return x
 
 genParser :: Parser () -> Parser a -> String -> a
-genParser space p input = 
+genParser space p input =
   case P.runParser p' () "" input of
     Left err -> error $ "Parse error: " ++ show err
     Right e -> e
  where p' = do space
                x <- p
-               P.eof 
+               P.eof
                return x
 
 makeParser' :: Parser a -> String -> Maybe a
@@ -127,14 +127,14 @@ makeParser :: Parser a -> String -> a
 makeParser = genParser whiteSpace
 
 genFileParser :: Parser () -> Parser a -> String -> IO a
-genFileParser space p file = 
-  do res <- P.parseFromFile p' file 
-     case res of 
+genFileParser space p file =
+  do res <- P.parseFromFile p' file
+     case res of
        Left err -> fail $ show err
        Right e -> return e
  where p' = do space
                x <- p
-               P.eof 
+               P.eof
                return x
 
 makeFileParser ::Parser a -> String -> IO a

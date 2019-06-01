@@ -1,5 +1,5 @@
 
-module ATP.Util.List 
+module ATP.Util.List
   ( module Data.List
   , allInjectiveMaps
   , allPairs
@@ -22,7 +22,7 @@ module ATP.Util.List
   )
 where
 
-import Prelude 
+import Prelude
 import ATP.Util.Lib (pow)
 import qualified Control.Monad as M
 import Data.List
@@ -38,9 +38,9 @@ ints n = Q.choose (0, n)
 
 list :: Int -> Gen [Int]
 list 0 = return []
-list n 
+list n
  | n > 0 = Q.oneof [ return [], M.liftM2 (:) Q.arbitrary (list $ n-1) ]
- | otherwise = error "Impossible" 
+ | otherwise = error "Impossible"
 
 -- Lists with very few possibilities for values.
 
@@ -48,48 +48,48 @@ list' :: Int -> Int -> Gen [Int]
 list' 0 _ = return []
 list' n m
  | n > 0 = Q.oneof [ return [], M.liftM2 (:) (ints m) (list' (n-1) m) ]
- | otherwise = error "Impossible" 
+ | otherwise = error "Impossible"
 
-{- 
-all2 f xs ys 
+{-
+all2 f xs ys
 
-returns true iff the lengths of xs and ys are the same and 
+returns true iff the lengths of xs and ys are the same and
 f xi yi --> True for all i < length xs
--} 
+-}
 
 all2 :: (a -> b -> Bool) -> [a] -> [b] -> Bool
 all2 _ [] [] = True
 all2 f (x:xs) (y:ys) = f x y && all2 f xs ys
 all2 _ _ _ = False
 
-{-  
+{-
 allPairs f xs ys
 
 returns f applied to all pairs of an element of xs with an element of ys
--} 
+-}
 
 allPairs :: (a -> b -> c) -> [a] -> [b] -> [c]
 allPairs f xs ys = [f x y | x <- xs, y <- ys]
 
 
-{- 
+{-
 | Given two lists l1 l2 where |l1| >= |l2|, return all
 injective maps between the two lists.  For example
 allInjectiveMaps [1,2,3] [4,5,6] = [[(1,4), (2,5), (3,6)], [(1,5),(2,4),(3,6)], ...]
--} 
+-}
 
 allInjectiveMaps :: [a] -> [b] -> [[(a,b)]]
 allInjectiveMaps [] _ = [[]]
 allInjectiveMaps (_:_) [] = []
-allInjectiveMaps (x:xs) ys = 
-  let sels = map (flip select ys) [0..length ys-1] 
+allInjectiveMaps (x:xs) ys =
+  let sels = map (`select` ys) [0..length ys-1]
       f (y, ys') = map ((x, y):) (allInjectiveMaps xs ys')
-  in concat $ map f sels
+  in concatMap f sels
 
 prop_allInjectiveMaps_length :: Property
 prop_allInjectiveMaps_length = Q.label "allInjectiveMaps_length" $
-  Q.forAll (list 8) $ \xs -> 
-  Q.forAll (list 8) $ \ys -> 
+  Q.forAll (list 8) $ \xs ->
+  Q.forAll (list 8) $ \ys ->
   length (allInjectiveMaps xs ys) ==
     product (take (length xs) [length ys, length ys - 1 .. ])
 
@@ -98,14 +98,14 @@ prop_allInjectiveMaps_length = Q.label "allInjectiveMaps_length" $
 
 classify :: (a -> Either b c) -> [a] -> ([b], [c])
 classify _ [] = ([], [])
-classify f (x:xs) = 
-  case f x of 
+classify f (x:xs) =
+  case f x of
     Left a -> (a:as, bs)
     Right b -> (as, b:bs)
   where (as, bs) = classify f xs
 
 distinctPairs :: [a] -> [(a,a)]
-distinctPairs (x:xs) = 
+distinctPairs (x:xs) =
   foldr (\y l -> (x,y) : l) (distinctPairs xs) xs
 distinctPairs [] = []
 
@@ -119,16 +119,16 @@ findFirst f (x:xs) = case f x of
 
 prop_findFirst_correct :: Property
 prop_findFirst_correct = Q.label "findFirst_correct" $
-  Q.forAll (list' 20 10) $ \xs -> 
-  Q.forAll (ints 10) $ \n -> 
+  Q.forAll (list' 20 10) $ \xs ->
+  Q.forAll (ints 10) $ \n ->
     case findFirst (\x -> if x == n then Just x else Nothing) xs of
-      Nothing -> not $ elem n xs
+      Nothing -> n `notElem` xs
       Just k -> k == n
 
-{- 
+{-
 | Return the first element satisfying the function, and removing
   it from the list.
--} 
+-}
 
 findRemFirst :: (a -> Maybe b) -> [a] -> Maybe (b, [a])
 findRemFirst _ [] = Nothing
@@ -138,22 +138,22 @@ findRemFirst f (x:xs) = case f x of
                Just (v, xs') -> Just (v, x:xs')
   Just y -> Just (y, xs)
 
-{- 
-| insertAll x [l1, ..., ln] --> [[(x:l1), l2, ..., ln], 
-                                 [l1, (x:l2), ..., ln], 
+{-
+| insertAll x [l1, ..., ln] --> [[(x:l1), l2, ..., ln],
+                                 [l1, (x:l2), ..., ln],
                                  ...
                                  [l1, l2, ..., (x:ln)]]
--} 
+-}
 
 insertAll :: a -> [[a]] -> [[[a]]]
 insertAll _ [] = []
 insertAll x (l:ls) = ((x:l) : ls) : map (l:) ls'
   where ls' = insertAll x ls
 
-{- 
-| Insert an element at a given position in a list.  
+{-
+| Insert an element at a given position in a list.
 insertAt n x l is a list where x is the nth element.
--} 
+-}
 
 insertAt :: Int -> a -> [a] -> [a]
 insertAt 0 x xs = x:xs
@@ -162,18 +162,18 @@ insertAt n x (y:ys) = y:insertAt (n-1) x ys
 
 prop_insertAt_length :: Property
 prop_insertAt_length = Q.label "insertAt_length" $
-  Q.forAll (list 10) $ \xs -> 
-  Q.forAll (ints $ length xs) $ \n -> 
-   n <= length xs ==> 
-   0 <= n ==> 
+  Q.forAll (list 10) $ \xs ->
+  Q.forAll (ints $ length xs) $ \n ->
+   n <= length xs ==>
+   0 <= n ==>
     length (insertAt n 7 xs) == length xs + 1
 
 prop_insertAt_correct :: Property
 prop_insertAt_correct = Q.label "insertAt_correct" $
-  Q.forAll (list 10) $ \xs -> 
-  Q.forAll (ints $ length xs) $ \n -> 
-   n <= length xs ==> 
-   0 <= n ==> 
+  Q.forAll (list 10) $ \xs ->
+  Q.forAll (ints $ length xs) $ \n ->
+   n <= length xs ==>
+   0 <= n ==>
     insertAt n 7 xs == take n xs ++ 7 : drop n xs
 
 foldr2 :: (a -> b -> c -> c) -> c -> [a] -> [b] -> c
@@ -192,30 +192,30 @@ partition' :: (a -> Maybe (Either b c)) -> [a] -> ([b], [c])
 partition' _ [] = ([], [])
 partition' f (x:xs) =
   let yzs@(ys, zs) = partition' f xs in
-  case f x of 
+  case f x of
     Nothing -> yzs
     Just (Left y) -> (y:ys, zs)
     Just (Right z) -> (ys, z:zs)
 
 partitions :: [a] -> [[[a]]]
 partitions [] = [[]]
-partitions (x:xs) = concat $ map f parts
+partitions (x:xs) = concatMap f parts
   where parts = partitions xs
         f p = ([x]:p) : insertAll x p
 
 -- ** uncons
 
 uncons :: [a] -> (a, [a])
-uncons [] = error "Impossible" 
+uncons [] = error "Impossible"
 uncons (h:t) = (h, t)
 
-{- 
+{-
 | Grab the nth element out of a list and return the element with
 the modified list.
--} 
+-}
 
 select :: Int -> [a] -> (a, [a])
-select _ [] = error "select: empty" 
+select _ [] = error "select: empty"
 select 0 (x:xs) = (x, xs)
 select n (x:xs) = (y, x:xs')
   where (y, xs') = select (n-1) xs
@@ -238,15 +238,15 @@ sublists (x:xs) = xs' ++ map (x:) xs'
 
 prop_sublists_length :: Property
 prop_sublists_length = Q.label "sublists_length" $
-  Q.forAll (list 8) $ \xs -> 
+  Q.forAll (list 8) $ \xs ->
     length (sublists xs) == 2 `pow` length xs
 
 -- -----------------------------------------------------------------------------
---  Tests                                                                       
+--  Tests
 -- -----------------------------------------------------------------------------
 
 tests :: IO ()
-tests = do 
+tests = do
   Q.quickCheck prop_allInjectiveMaps_length
   Q.quickCheck prop_findFirst_correct
   Q.quickCheck prop_insertAt_correct
